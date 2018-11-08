@@ -17,9 +17,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using Edulinq.TestSupport;
+using L2O2.TestSupport;
 
-namespace Edulinq.Tests
+namespace L2O2.Tests
 {
     /// <summary>
     /// This class uses LinkedList[T] for most of the tests, as that doesn't implement IList[T] so won't

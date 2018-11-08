@@ -13,12 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Edulinq.TestSupport;
+using L2O2.TestSupport;
 using System;
 using System.Linq;
 using NUnit.Framework;
 
-namespace Edulinq.Tests
+namespace L2O2.Tests
 {
     [TestFixture]
     public class UnionTest

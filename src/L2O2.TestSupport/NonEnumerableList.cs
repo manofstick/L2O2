@@ -17,7 +17,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Edulinq.TestSupport
+namespace L2O2.TestSupport
 {
     /// <summary>
     /// Collection class backed by a List[T] which delegates everything to the list

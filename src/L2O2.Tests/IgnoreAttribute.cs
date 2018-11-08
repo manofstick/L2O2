@@ -15,7 +15,7 @@
 #endregion
 using System;
 
-namespace Edulinq.Tests
+namespace L2O2.Tests
 {
     // This is a horrible hack to let us force all tests to be run by recompiling with
     // the ALL_TESTS symbol defined. Basically it's a workaround for ReSharper not supporting

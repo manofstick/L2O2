@@ -18,7 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 
-namespace Edulinq
+namespace L2O2
 {
     public static partial class Enumerable
     {

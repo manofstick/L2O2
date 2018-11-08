@@ -16,7 +16,7 @@
 using System.Linq;
 using NUnit.Framework;
 
-namespace Edulinq.Tests
+namespace L2O2.Tests
 {
     [TestFixture]
     public class EmptyTest

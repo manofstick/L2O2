@@ -16,7 +16,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Edulinq
+namespace L2O2
 {
     /// <summary>
     /// Implementation of ILookup which is immutable to the public but mutable internally;

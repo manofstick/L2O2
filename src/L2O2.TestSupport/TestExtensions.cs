@@ -16,7 +16,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 
-namespace Edulinq.TestSupport
+namespace L2O2.TestSupport
 {
     /// <summary>
     /// This is originally from MoreLINQ:

@@ -15,7 +15,7 @@
 #endregion
 using System.Collections.Generic;
 
-namespace Edulinq
+namespace L2O2
 {
     public static partial class Enumerable
     {

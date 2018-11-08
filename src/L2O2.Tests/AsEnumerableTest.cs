@@ -15,10 +15,10 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
-using Edulinq.TestSupport;
+using L2O2.TestSupport;
 using NUnit.Framework;
 
-namespace Edulinq.Tests
+namespace L2O2.Tests
 {
 #if !LINQBRIDGE // In the build I've got, AsEnumerable isn't an extension method
     [TestFixture]

@@ -16,7 +16,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Edulinq.TestSupport
+namespace L2O2.TestSupport
 {
     /// <summary>
     /// Testing against LinqBridge, we can't use StringEx.Join(string, IEnumerable[T]) because it's

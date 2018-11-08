@@ -16,7 +16,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Edulinq
+namespace L2O2
 {
     /// <summary>
     /// Dictionary which additionally allows null keys. This doesn't implement

@@ -15,14 +15,14 @@
 #endregion
 using System.Collections.Generic;
 
-namespace Edulinq.TestSupport
+namespace L2O2.TestSupport
 {
     // LinqBridge doesn't provide HashSet<T>; tests are conditionalized too
 #if !LINQBRIDGE
     public static class HashSetProvider
     {
         /// <summary>
-        /// Allows a HashSet to be created in test classes, even though the Edulinq
+        /// Allows a HashSet to be created in test classes, even though the L2O2
         /// configuration of the tests project doesn't have a reference to System.Core.
         /// Basically it's a grotty hack.
         /// </summary>

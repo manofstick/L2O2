@@ -19,7 +19,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
-namespace Edulinq.Tests
+namespace L2O2.Tests
 {
     [TestFixture]
     public class ToDictionaryTest

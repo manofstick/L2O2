@@ -16,7 +16,7 @@
 #define IMPLEMENT_CONTAINS_COMPATIBILITY_MODE
 using System;
 using System.Collections.Generic;
-namespace Edulinq
+namespace L2O2
 {
     public static partial class Enumerable
     {

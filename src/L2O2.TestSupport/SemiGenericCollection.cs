@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Edulinq.TestSupport
+namespace L2O2.TestSupport
 {
     /// <summary>
     /// This is a distinctly odd collection - it implements the nongeneric ICollection interface, but the

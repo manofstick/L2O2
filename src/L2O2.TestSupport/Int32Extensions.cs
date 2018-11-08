@@ -15,7 +15,7 @@
 #endregion
 using System.Globalization;
 
-namespace Edulinq.TestSupport
+namespace L2O2.TestSupport
 {
     /// <summary>
     /// Simple class to let us convert an Int32 to a string using the invariant culture,

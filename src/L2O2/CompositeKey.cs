@@ -16,7 +16,7 @@
 
 using System.Collections.Generic;
 
-namespace Edulinq
+namespace L2O2
 {
     internal struct CompositeKey<TPrimary, TSecondary>
     {

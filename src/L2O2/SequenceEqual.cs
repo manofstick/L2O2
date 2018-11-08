@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Edulinq
+namespace L2O2
 {
     public static partial class Enumerable
     {

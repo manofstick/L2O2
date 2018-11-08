@@ -17,7 +17,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Edulinq
+namespace L2O2
 {
     internal class OrderedEnumerable<TElement, TCompositeKey> : IOrderedEnumerable<TElement>
     {

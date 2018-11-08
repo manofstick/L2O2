@@ -16,7 +16,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Edulinq.TestSupport
+namespace L2O2.TestSupport
 {
     /// <summary>
     /// Implementation of IComparer[int] which simply compares absolute values.

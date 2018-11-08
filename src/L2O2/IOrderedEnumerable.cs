@@ -16,7 +16,7 @@
 
 using System.Collections.Generic;
 using System;
-namespace Edulinq
+namespace L2O2
 {
     public interface IOrderedEnumerable<TElement> : IEnumerable<TElement>
     {

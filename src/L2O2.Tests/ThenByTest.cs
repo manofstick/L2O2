@@ -15,11 +15,11 @@
 #endregion
 using System;
 using System.Linq;
-using Edulinq.TestSupport;
+using L2O2.TestSupport;
 using NUnit.Framework;
 using System.Collections.Generic;
 
-namespace Edulinq.Tests
+namespace L2O2.Tests
 {
     [TestFixture]
     public class ThenByTest

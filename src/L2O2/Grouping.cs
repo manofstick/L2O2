@@ -17,7 +17,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-namespace Edulinq
+namespace L2O2
 {
     /// <summary>
     /// Lightweight wrapper around a list. This is mutable within the assembly, but immutable externally;

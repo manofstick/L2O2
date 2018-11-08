@@ -15,7 +15,7 @@
 #endregion
 using System.Collections.Generic;
 
-namespace Edulinq
+namespace L2O2
 {
 #if DOTNET35_ONLY
     public interface IGrouping<TKey, TElement> : IEnumerable<TElement>

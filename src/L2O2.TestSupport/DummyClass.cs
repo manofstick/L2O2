@@ -17,7 +17,7 @@
 namespace System.Linq
 {
     // This is a dummy class just so that the System.Linq namespace has *something* in it.
-    // That allows the using directives in Edulinq.Tests to survive without the "real" System.Linq
+    // That allows the using directives in L2O2.Tests to survive without the "real" System.Linq
     // being available.
     public class DummyClass
     {
