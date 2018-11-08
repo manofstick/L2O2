@@ -1,16 +1,5 @@
-This is the source repository for Edulinq - a project to reimplement
-LINQ to Objects for educational purposes. The introductory blog post
-to the series is here:
+A c# implementation of an [F# PR](https://github.com/Microsoft/visualfsharp/pull/2745).
 
-https://codeblog.jonskeet.uk/2010/09/03/reimplementing-linq-to-objects-part-1-introduction/
+This has been forked off [Jon Skeet's EduLinq](https://codeblog.jonskeet.uk/category/edulinq/) for bootstrapping, rather than for the ideas represented there.
 
-and all other blog posts will use the Edulinq tag on my blog:
-
-https://codeblog.jonskeet.uk/category/edulinq/
-
-The posts will also be included in the "posts" directory within this
-source repository.
-
-If you have any questions, please mail me: skeet@pobox.com
-
-
+.....w...o..r....k..........i....n...........p..r..o...g..r....e.....s.....s....
