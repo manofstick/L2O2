@@ -2,6 +2,6 @@
 {
     interface ISeqTransform<T,U>
     {
-        SeqConsumerActivity<T, V> Compose<V>(ISeqConsumer consumer, PipeIdx pipeIdx, SeqConsumerActivity<U,V> activity);
+        SeqConsumerActivity<T, V> Compose<V>(ISeqConsumer consumer, SeqConsumerActivity<U,V> activity);
     }
 }

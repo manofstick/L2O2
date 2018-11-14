@@ -4,7 +4,7 @@ namespace L2O2.Core
 {
     interface ISeqConsumer
     {
-        void StopFurtherProcessing(PipeIdx pipeIdx);
-        void ListenForStopFurtherProcessing(Action<PipeIdx> a);
+        void StopFurtherProcessing();
+        void ListenForStopFurtherProcessing(Action a);
     }
 }

@@ -4,8 +4,9 @@ namespace L2O2.Core
 {
     abstract class SeqConsumer<T, R>
         : SeqConsumerActivity<T, T>
+        , ISeqConsumer
     {
-        private Action<PipeIdx> listeners;
+        private Action listeners;
 
         protected SeqConsumer(R initalResult)
         {
@@ -13,9 +14,20 @@ namespace L2O2.Core
         }
 
         public R Result { get; protected set; }
+        public bool Halted { get; protected set; }
 
-        public override void ChainComplete(PipeIdx pipeIdx) {}
+        public override void ChainComplete() {}
         public override void ChainDispose() {}
+
+        public void ListenForStopFurtherProcessing(Action a)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StopFurtherProcessing()
+        {
+            throw new NotImplementedException();
+        }
 
         //member __.HaltedIdx = haltedIdx
 

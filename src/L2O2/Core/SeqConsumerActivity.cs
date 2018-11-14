@@ -2,8 +2,8 @@
 {
     abstract class SeqConsumerActivity
     {
-        public abstract void ChainComplete(PipeIdx pipeIdx);
-        public abstract void ChainDispose();
+        public virtual void ChainComplete() { }
+        public virtual void ChainDispose() { }
     }
 
     abstract class SeqConsumerActivity<T>
