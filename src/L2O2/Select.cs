@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using L2O2.Core;
 using System;
 using System.Collections.Generic;
 
@@ -55,10 +56,7 @@ namespace L2O2
             this IEnumerable<TSource> source,
             Func<TSource, TResult> selector)
         {
-            foreach (TSource item in source)
-            {
-                yield return selector(item);
-            }
+            return source.OfSeq().Select(selector);
         }
 #endif
 

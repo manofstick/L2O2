@@ -26,7 +26,7 @@ namespace L2O2.Core
 
         public void StopFurtherProcessing()
         {
-            throw new NotImplementedException();
+            Halted = true;
         }
 
         //member __.HaltedIdx = haltedIdx

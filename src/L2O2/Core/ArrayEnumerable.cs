@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace L2O2.Core
 {
@@ -16,8 +15,7 @@ namespace L2O2.Core
 
 	    public override IEnumerator<U> GetEnumerator()
 	    {
-            throw new NotImplementedException();
-		    //return ArrayEnumerator<T, U>.Create(array, this);
+		    return ArrayEnumerator<T, U>.Create(array, this);
 	    }
 
 	    public override IConsumableSeq<V> Transform<V>(ISeqTransform<U, V> next)

@@ -7,11 +7,11 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        private class Select<T, U> : ISeqTransform<T, U>
+        private class SelectImpl<T, U> : ISeqTransform<T, U>
         {
             private readonly Func<T, U> selector;
 
-            public Select(Func<T, U> selector)
+            public SelectImpl(Func<T, U> selector)
             {
                 this.selector = selector;
             }
@@ -39,12 +39,11 @@ namespace L2O2
             }
         }
 
-        private static IEnumerable<TResult> SelectImpl<TSource, TResult>(
+        internal static IConsumableSeq<TResult> Select<TSource, TResult>(
             this IConsumableSeq<TSource> source,
             Func<TSource, TResult> selector)
         {
-            return source.Transform(new Select<TSource, TResult>(selector));
+            return source.Transform(new SelectImpl<TSource, TResult>(selector));
         }
-
     }
 }
