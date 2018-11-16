@@ -22,5 +22,13 @@ namespace L2O2.Core
                     return new EnumerableEnumerable<T, T>(e, IdentityTransform<T>.Instance);
             }
         }
+
+        internal class EmptyEnumerator<T>
+        {
+            private static IEnumerator<T> Create() { yield break; }
+            public static IEnumerator<T> Instance = Create();
+        }
+
+
     }
 }

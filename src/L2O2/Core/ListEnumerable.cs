@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static L2O2.Consumable;
 
 namespace L2O2.Core
 {
@@ -15,7 +16,20 @@ namespace L2O2.Core
 
         public override IEnumerator<U> GetEnumerator()
         {
+            if (list.Count == 0)
+                return Utils.EmptyEnumerator<U>.Instance;
+
+            if (transform is SelectImpl<T, U> t2u)
+                return GetEnumerator_Select(t2u);
+
             return ListEnumerator<T, U>.Create(list, this);
+        }
+
+        private IEnumerator<U> GetEnumerator_Select(SelectImpl<T, U> t2u)
+        {
+            var f = t2u.selector;
+            foreach (var item in list)
+                yield return f(item);
         }
 
         public override IConsumableSeq<V> Transform<V>(ISeqTransform<U, V> next)
