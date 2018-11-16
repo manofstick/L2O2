@@ -1,7 +1,5 @@
 ﻿using L2O2.Core;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace L2O2
 {

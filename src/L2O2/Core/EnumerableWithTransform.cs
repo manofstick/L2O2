@@ -25,7 +25,7 @@ namespace L2O2.Core
 
         internal ISeqTransform<T,V> ComposeWith<V>(ISeqTransform<U, V> next)
         {
-            return new CompositionTransform<T, U, V>(transform, next);
+            return CompositionTransform<T, U, V>.Combine(transform, next);
         }
     }
 }

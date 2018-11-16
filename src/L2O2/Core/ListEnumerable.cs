@@ -20,7 +20,7 @@ namespace L2O2.Core
 
         public override IConsumableSeq<V> Transform<V>(ISeqTransform<U, V> next)
         {
-            return new ListEnumerable<T, V>(list, new CompositionTransform<T, U, V>(transform, next));
+            return new ListEnumerable<T, V>(list, CompositionTransform<T, U, V>.Combine(transform, next));
         }
 
         public override TResult Consume<TResult>(Func<SeqConsumer<U, TResult>> getConsumer)

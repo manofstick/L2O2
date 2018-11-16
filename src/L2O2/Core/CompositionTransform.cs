@@ -9,7 +9,7 @@ namespace L2O2.Core
 	    internal ISeqTransform<U, V> second;
 	    internal ISeqTransform<T, U> first;
 
-	    public CompositionTransform(ISeqTransform<T, U> first, ISeqTransform<U, V> second)
+	    private CompositionTransform(ISeqTransform<T, U> first, ISeqTransform<U, V> second)
 	    {
 		    this.first = first;
 		    this.second = second;
@@ -17,6 +17,9 @@ namespace L2O2.Core
 
 	    internal static ISeqTransform<T, V> Combine(ISeqTransform<T, U> first, ISeqTransform<U, V> second)
 	    {
+            if (ReferenceEquals(first, IdentityTransform<T>.Instance))
+                return (ISeqTransform<T, V>)second;
+
 		    return new CompositionTransform<T, U, V>(first, second);
 	    }
 
