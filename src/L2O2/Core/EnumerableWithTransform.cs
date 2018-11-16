@@ -16,13 +16,6 @@ namespace L2O2.Core
             return transform.Compose(consumer, consumer);
         }
 
-        internal SeqConsumer<U, TResult> CreatePipeline<TResult>(Func<SeqConsumer<U, TResult>> getConsumer, out SeqConsumerActivity<T, U> activity)
-        {
-            var seqConsumer = getConsumer();
-            activity = CreateActivityPipeline(seqConsumer);
-            return seqConsumer;
-        }
-
         internal ISeqTransform<T,V> ComposeWith<V>(ISeqTransform<U, V> next)
         {
             return CompositionTransform<T, U, V>.Combine(transform, next);

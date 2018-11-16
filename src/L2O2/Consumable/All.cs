@@ -30,7 +30,7 @@ namespace L2O2
             this IConsumableSeq<TSource> source,
             Func<TSource, bool> selector)
         {
-            return source.Consume(() => new AllImpl<TSource>(selector));
+            return source.Consume(new AllImpl<TSource>(selector));
         }
     }
 }

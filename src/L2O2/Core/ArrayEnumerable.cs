@@ -37,11 +37,42 @@ namespace L2O2.Core
 		    return new ArrayEnumerable<T,V>(array, CompositionTransform<T, U, V>.Combine(transform, next));
 	    }
 
-        public override TResult Consume<TResult>(Func<SeqConsumer<U, TResult>> getConsumer)
+        public override TResult Consume<TResult>(SeqConsumer<U, TResult> consumer)
         {
-		    var consumer = CreatePipeline(getConsumer, out var activity);
-		    try
-		    {
+            if (array.Length == 0)
+                return consumer.Result;
+            else if (array.Length < 10 && transform.TryOwn()) // TODO: Really this is a funciton of length of transform and array size
+                return Consume_Owned(consumer);
+
+            return Consume_Pipeline(consumer);
+        }
+
+        private TResult Consume_Owned<TResult>(SeqConsumer<U, TResult> consumer)
+        {
+            try
+            {
+                for (var i = 0; i < array.Length; ++i)
+                {
+                    if (consumer.Halted)
+                        break;
+
+                    if (transform.OwnedProcessNext(array[i], out var u))
+                        consumer.ProcessNext(u);
+                }
+                consumer.ChainComplete();
+            }
+            finally
+            {
+                consumer.ChainDispose();
+            }
+            return consumer.Result;
+        }
+
+        private TResult Consume_Pipeline<TResult>(SeqConsumer<U, TResult> consumer)
+        {
+            var activity = CreateActivityPipeline(consumer);
+            try
+            {
                 for (var i = 0; i < array.Length; ++i)
                 {
                     if (consumer.Halted)
@@ -49,13 +80,13 @@ namespace L2O2.Core
 
                     activity.ProcessNext(array[i]);
                 }
-			    activity.ChainComplete();
-		    }
-		    finally
-		    {
-			    activity.ChainDispose();
-		    }
-		    return consumer.Result;
-	    }
+                activity.ChainComplete();
+            }
+            finally
+            {
+                activity.ChainDispose();
+            }
+            return consumer.Result;
+        }
     }
 }

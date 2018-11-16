@@ -29,8 +29,8 @@ namespace L202.Perf
         static void Main(string[] args)
         {
             //var library = Library.L2O2;
-            var dataStructure = DataStructure.Enumerable;
-            var function = Function.Foreach;
+            var dataStructure = DataStructure.Array;
+            var function = Function.All;
             (
                 string __FUNCTIONS__,
                 Func<IEnumerable<int>, Func<int, int>, IEnumerable<int>> __SELECT__,
@@ -38,7 +38,7 @@ namespace L202.Perf
             ) =
 #if false
             (
-                "L202",
+                "L2O2",
                 L2O2.Enumerable.Select,
                 L2O2.Enumerable.All
             );

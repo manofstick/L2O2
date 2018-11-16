@@ -19,6 +19,12 @@ namespace L2O2
                 return new Activity<V>(selector, activity);
             }
 
+            public bool OwnedProcessNext(T t, out U u)
+            {
+                u = selector(t);
+                return true;
+            }
+
             virtual public bool TryAggregate<V>(ISeqTransform<U, V> next, out ISeqTransform<T, V> composite)
             {
                 if (next is SelectImpl<U,V> u2v)
@@ -28,6 +34,11 @@ namespace L2O2
                 }
                 composite = null;
                 return false;
+            }
+
+            public bool TryOwn()
+            {
+                return true;
             }
 
             private class Activity<V> : SeqConsumerActivity<T, V>
@@ -98,7 +109,7 @@ namespace L2O2
             }
         }
 
-        internal class SelectImpl<T, U, V, W,X> : SelectImpl<T, X>
+        internal class SelectImpl<T, U, V, W, X> : SelectImpl<T, X>
         {
             public SelectImpl(Func<T, U> t2u, Func<U, V> u2v, Func<V, W> v2w, Func<W,X> w2x)
                 : base(t => w2x(v2w(u2v(t2u(t)))))

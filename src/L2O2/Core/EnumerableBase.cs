@@ -10,6 +10,6 @@ namespace L2O2.Core
 
         public abstract IEnumerator<T> GetEnumerator();
         public abstract IConsumableSeq<U> Transform<U>(ISeqTransform<T, U> transform);
-        public abstract Result Consume<Result>(Func<SeqConsumer<T, Result>> getConsumer);
+        public abstract Result Consume<Result>(SeqConsumer<T, Result> consumer);
     }
 }

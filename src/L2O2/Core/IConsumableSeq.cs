@@ -7,6 +7,6 @@ namespace L2O2.Core
         : IEnumerable<T> 
     {
         IConsumableSeq<U> Transform<U>(ISeqTransform<T, U> transform);
-        Result Consume<Result>(Func<SeqConsumer<T,Result>> getConsumer);
+        Result Consume<Result>(SeqConsumer<T,Result> consumer);
     }
 }

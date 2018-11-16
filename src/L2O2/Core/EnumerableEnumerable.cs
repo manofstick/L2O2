@@ -34,9 +34,9 @@ namespace L2O2.Core
             return new EnumerableEnumerable<T, V>(enumerable, CompositionTransform<T, U, V>.Combine(transform, next));
         }
 
-        public override TResult Consume<TResult>(Func<SeqConsumer<U, TResult>> getConsumer)
+        public override TResult Consume<TResult>(SeqConsumer<U, TResult> consumer)
         {
-            var consumer = CreatePipeline(getConsumer, out var activity);
+            var activity = CreateActivityPipeline(consumer);
             try
             {
                 foreach(var item in enumerable)

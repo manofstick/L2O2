@@ -34,5 +34,19 @@ namespace L2O2.Core
 	    {
 		    return first.Compose(outOfBand, second.Compose(outOfBand, next));
 	    }
+
+        public bool TryOwn()
+        {
+            return first.TryOwn() && second.TryOwn();
+        }
+
+        public bool OwnedProcessNext(T t, out V v)
+        {
+            if (first.OwnedProcessNext(t, out var u))
+                return second.OwnedProcessNext(u, out v);
+
+            v = default(V);
+            return false;
+        }
     }
 }
