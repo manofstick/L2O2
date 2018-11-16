@@ -5,9 +5,9 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        private class SelectImpl<T, U> : ISeqTransform<T, U>
+        internal class SelectImpl<T, U> : ISeqTransform<T, U>
         {
-            private readonly Func<T, U> selector;
+            internal readonly Func<T, U> selector;
 
             public SelectImpl(Func<T, U> selector)
             {
@@ -17,6 +17,17 @@ namespace L2O2
             public SeqConsumerActivity<T, V> Compose<V>(ISeqConsumer consumer, SeqConsumerActivity<U, V> activity)
             {
                 return new Activity<V>(selector, activity);
+            }
+
+            virtual public bool TryAggregate<V>(ISeqTransform<U, V> next, out ISeqTransform<T, V> composite)
+            {
+                if (next is SelectImpl<U,V> u2v)
+                {
+                    composite = new SelectImpl<T,U,V>(selector, u2v.selector);
+                    return true;
+                }
+                composite = null;
+                return false;
             }
 
             private class Activity<V> : SeqConsumerActivity<T, V>
@@ -37,6 +48,63 @@ namespace L2O2
             }
         }
 
+        internal class SelectImpl<T, U, V> : SelectImpl<T, V>
+        {
+            private Func<T, U> t2u;
+            private Func<U, V> u2v;
+
+            public SelectImpl(Func<T, U> t2u, Func<U, V> u2v)
+                : base (t => u2v(t2u(t)))
+            {
+                this.t2u = t2u;
+                this.u2v = u2v;
+            }
+
+            public override bool TryAggregate<W>(ISeqTransform<V, W> next, out ISeqTransform<T, W> composite)
+            {
+                if (next is SelectImpl<V, W> v2w)
+                {
+                    composite = new SelectImpl<T,U,V,W>(t2u,u2v,v2w.selector);
+                    return true;
+                }
+                composite = null;
+                return false;
+            }
+        }
+
+        internal class SelectImpl<T, U, V, W> : SelectImpl<T, W>
+        {
+            private Func<T, U> t2u;
+            private Func<U, V> u2v;
+            private Func<V, W> v2w;
+
+            public SelectImpl(Func<T, U> t2u, Func<U, V> u2v, Func<V, W> v2w)
+                : base(t => v2w(u2v(t2u(t))))
+            {
+                this.t2u = t2u;
+                this.u2v = u2v;
+                this.v2w = v2w;
+            }
+
+            public override bool TryAggregate<X>(ISeqTransform<W, X> next, out ISeqTransform<T, X> composite)
+            {
+                if (next is SelectImpl<W, X> w2x)
+                {
+                    composite = new SelectImpl<T, U, V, W, X>(t2u, u2v, v2w, w2x.selector);
+                    return true;
+                }
+                composite = null;
+                return false;
+            }
+        }
+
+        internal class SelectImpl<T, U, V, W,X> : SelectImpl<T, X>
+        {
+            public SelectImpl(Func<T, U> t2u, Func<U, V> u2v, Func<V, W> v2w, Func<W,X> w2x)
+                : base(t => w2x(v2w(u2v(t2u(t)))))
+            {}
+        }
+
         internal static IConsumableSeq<TResult> Select<TSource, TResult>(
             this IConsumableSeq<TSource> source,
             Func<TSource, TResult> selector)
@@ -44,4 +112,5 @@ namespace L2O2
             return source.Transform(new SelectImpl<TSource, TResult>(selector));
         }
     }
+
 }

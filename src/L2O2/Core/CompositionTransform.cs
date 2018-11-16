@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using static L2O2.Consumable;
 
 namespace L2O2.Core
 {
@@ -17,13 +18,19 @@ namespace L2O2.Core
 
 	    internal static ISeqTransform<T, V> Combine(ISeqTransform<T, U> first, ISeqTransform<U, V> second)
 	    {
-            if (ReferenceEquals(first, IdentityTransform<T>.Instance))
-                return (ISeqTransform<T, V>)second;
+            if (first.TryAggregate(second, out var composite))
+                return composite;
 
 		    return new CompositionTransform<T, U, V>(first, second);
 	    }
 
-	    public SeqConsumerActivity<T, W> Compose<W>(ISeqConsumer outOfBand, SeqConsumerActivity<V, W> next)
+        public bool TryAggregate<V1>(ISeqTransform<V, V1> next, out ISeqTransform<T, V1> composite)
+        {
+            composite = null;
+            return false;
+        }
+
+        public SeqConsumerActivity<T, W> Compose<W>(ISeqConsumer outOfBand, SeqConsumerActivity<V, W> next)
 	    {
 		    return first.Compose(outOfBand, second.Compose(outOfBand, next));
 	    }

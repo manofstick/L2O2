@@ -13,7 +13,7 @@ namespace L202.Perf
                 Func<IEnumerable<int>, Func<int, int>, IEnumerable<int>> __SELECT__,
                 Func<IEnumerable<int>, Func<int, bool>, bool> __ALL__
             ) =
-#if true
+#if false
             (
                 "L202",
                 L2O2.Enumerable.Select,
