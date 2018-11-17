@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using L2O2.Core;
 using System;
 using System.Collections.Generic;
 
@@ -48,21 +49,21 @@ namespace L2O2
             {
                 throw new ArgumentNullException("predicate");
             }
-            return WhereImpl(source, predicate);
+            return source.OfSeq().Where(predicate);
         }
 
-        private static IEnumerable<TSource> WhereImpl<TSource>(
-            this IEnumerable<TSource> source,
-            Func<TSource, bool> predicate)
-        {
-            foreach (TSource item in source)
-            {
-                if (predicate(item))
-                {
-                    yield return item;
-                }
-            }
-        }
+        //private static IEnumerable<TSource> WhereImpl<TSource>(
+        //    this IEnumerable<TSource> source,
+        //    Func<TSource, bool> predicate)
+        //{
+        //    foreach (TSource item in source)
+        //    {
+        //        if (predicate(item))
+        //        {
+        //            yield return item;
+        //        }
+        //    }
+        //}
 #endif
 
         public static IEnumerable<TSource> Where<TSource>(

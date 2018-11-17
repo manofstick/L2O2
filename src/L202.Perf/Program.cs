@@ -34,19 +34,22 @@ namespace L202.Perf
             (
                 string __FUNCTIONS__,
                 Func<IEnumerable<int>, Func<int, int>, IEnumerable<int>> __SELECT__,
-                Func<IEnumerable<int>, Func<int, bool>, bool> __ALL__
+                Func<IEnumerable<int>, Func<int, bool>, bool> __ALL__,
+                Func<IEnumerable<int>, Func<int, bool>, IEnumerable<int>> __WHERE__
             ) =
-#if false
+#if true
             (
                 "L2O2",
                 L2O2.Enumerable.Select,
-                L2O2.Enumerable.All
+                L2O2.Enumerable.All,
+                L2O2.Enumerable.Where
             );
 #else
             (
                 "Linq",
                 System.Linq.Enumerable.Select,
-                System.Linq.Enumerable.All
+                System.Linq.Enumerable.All,
+                System.Linq.Enumerable.Where
             );
 #endif
             System.Console.WriteLine($"{__FUNCTIONS__} {dataStructure} {function} ({DateTime.Now})\n--");
@@ -69,10 +72,11 @@ namespace L202.Perf
                     throw new Exception("bad DataStructure");
 
                 data = __SELECT__(data, x => x + 1);
+                data = __WHERE__(data, x => x != 42);
                 data = __SELECT__(data, x => x + 1);
+                data = __WHERE__(data, x => x != 42);
                 data = __SELECT__(data, x => x + 1);
-                data = __SELECT__(data, x => x + 1);
-                data = __SELECT__(data, x => x + 1);
+                data = __WHERE__(data, x => x != 42);
 
                 var innerIterations = 5;
                 var totalTime = 0L;
