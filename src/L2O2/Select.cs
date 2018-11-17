@@ -21,70 +21,24 @@ namespace L2O2
 {
     public static partial class Enumerable
     {
-#if IMPLEMENT_OPERATORS_USING_SELECTMANY
         public static IEnumerable<TResult> Select<TSource, TResult>(
             this IEnumerable<TSource> source,
             Func<TSource, TResult> selector)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
-            if (selector == null)
-            {
-                throw new ArgumentNullException("selector");
-            }
-            return source.SelectMany(x => Enumerable.Repeat(selector(x), 1));
-        }
-#else
-        public static IEnumerable<TResult> Select<TSource, TResult>(
-            this IEnumerable<TSource> source,
-            Func<TSource, TResult> selector)
-        {
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
-            if (selector == null)
-            {
-                throw new ArgumentNullException("selector");
-            }
-            return SelectImpl(source, selector);
-        }
+            if (source == null) throw new ArgumentNullException("source");
+            if (selector == null) throw new ArgumentNullException("selector");
 
-        private static IEnumerable<TResult> SelectImpl<TSource, TResult>(
-            this IEnumerable<TSource> source,
-            Func<TSource, TResult> selector)
-        {
             return source.OfSeq().Select(selector);
         }
-#endif
 
         public static IEnumerable<TResult> Select<TSource, TResult>(
             this IEnumerable<TSource> source,
             Func<TSource, int, TResult> selector)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
-            if (selector == null)
-            {
-                throw new ArgumentNullException("selector");
-            }
-            return SelectImpl(source, selector);
-        }
+            if (source == null) throw new ArgumentNullException("source");
+            if (selector == null) throw new ArgumentNullException("selector");
 
-        private static IEnumerable<TResult> SelectImpl<TSource, TResult>(
-            this IEnumerable<TSource> source,
-            Func<TSource, int, TResult> selector)
-        {
-            int index = 0;
-            foreach (TSource item in source)
-            {
-                yield return selector(item, index);
-                index++;
-            }
+            return source.OfSeq().Select(selector);
         }
     }
 }
