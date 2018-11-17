@@ -39,6 +39,39 @@ namespace L2O2.Core
 
         public override TResult Consume<TResult>(SeqConsumer<U, TResult> consumer)
         {
+            const int MaxLengthToAvoidPipelineCreationCost = 5;
+
+            if (list.Count == 0)
+                return consumer.Result;
+            else if (list.Count <= MaxLengthToAvoidPipelineCreationCost && transform.TryOwn())
+                return Consume_Owned(consumer);
+
+            return Consume_Pipeline(consumer);
+        }
+
+        private TResult Consume_Owned<TResult>(SeqConsumer<U, TResult> consumer)
+        {
+            try
+            {
+                for (var i = 0; i < list.Count; ++i)
+                {
+                    if (consumer.Halted)
+                        break;
+
+                    if (transform.OwnedProcessNext(list[i], out var u))
+                        consumer.ProcessNext(u);
+                }
+                consumer.ChainComplete();
+            }
+            finally
+            {
+                consumer.ChainDispose();
+            }
+            return consumer.Result;
+        }
+
+        private TResult Consume_Pipeline<TResult>(SeqConsumer<U, TResult> consumer)
+        {
             var activity = CreateActivityPipeline(consumer);
             try
             {

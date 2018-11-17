@@ -39,9 +39,11 @@ namespace L2O2.Core
 
         public override TResult Consume<TResult>(SeqConsumer<U, TResult> consumer)
         {
+            const int MaxLengthToAvoidPipelineCreationCost = 5;
+
             if (array.Length == 0)
                 return consumer.Result;
-            else if (array.Length < 10 && transform.TryOwn()) // TODO: Really this is a funciton of length of transform and array size
+            else if (array.Length <= MaxLengthToAvoidPipelineCreationCost && transform.TryOwn())
                 return Consume_Owned(consumer);
 
             return Consume_Pipeline(consumer);
