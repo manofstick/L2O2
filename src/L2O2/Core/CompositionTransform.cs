@@ -24,8 +24,14 @@ namespace L2O2.Core
 		    return new CompositionTransform<T, U, V>(first, second);
 	    }
 
-        public bool TryAggregate<V1>(ISeqTransform<V, V1> next, out ISeqTransform<T, V1> composite)
+        public bool TryAggregate<W>(ISeqTransform<V, W> next, out ISeqTransform<T, W> composite)
         {
+            if (second.TryAggregate(next, out var secondAndNext))
+            {
+                composite = new CompositionTransform<T, U, W>(first, secondAndNext);
+                return true;
+            }
+
             composite = null;
             return false;
         }

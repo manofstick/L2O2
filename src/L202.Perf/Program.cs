@@ -34,12 +34,14 @@ namespace L202.Perf
             (
                 string __FUNCTIONS__,
                 Func<IEnumerable<int>, Func<int, int>, IEnumerable<int>> __SELECT__,
+                Func<IEnumerable<int>, Func<int, int, int>, IEnumerable<int>> __SELECTI__,
                 Func<IEnumerable<int>, Func<int, bool>, bool> __ALL__,
                 Func<IEnumerable<int>, Func<int, bool>, IEnumerable<int>> __WHERE__
             ) =
 #if true
             (
                 "L2O2",
+                L2O2.Enumerable.Select,
                 L2O2.Enumerable.Select,
                 L2O2.Enumerable.All,
                 L2O2.Enumerable.Where
@@ -48,35 +50,29 @@ namespace L202.Perf
             (
                 "Linq",
                 System.Linq.Enumerable.Select,
+                System.Linq.Enumerable.Select,
                 System.Linq.Enumerable.All,
                 System.Linq.Enumerable.Where
             );
 #endif
             System.Console.WriteLine($"{__FUNCTIONS__} {dataStructure} {function} ({DateTime.Now})\n--");
 
-            for (var orderIdx = 0; orderIdx < 10; ++orderIdx)
+            for (var orderIdx = 0; orderIdx < 1; ++orderIdx)
             {
-                var elements = (int)Math.Pow(2, orderIdx)-1;
-                var iterations = 10000000 / (elements+1);
+                var elements = (int)Math.Pow(2, orderIdx) - 1;
+                var iterations = 10000000 / (elements + 1);
 
                 Console.Write($"{elements}:");
 
-                IEnumerable<int> data = System.Linq.Enumerable.Range(0, elements);
+                IEnumerable<int> source = System.Linq.Enumerable.Range(0, elements);
                 if (dataStructure == DataStructure.Array)
-                    data = System.Linq.Enumerable.ToArray(data);
+                    source = System.Linq.Enumerable.ToArray(source);
                 else if (dataStructure == DataStructure.List)
-                    data = System.Linq.Enumerable.ToList(data);
+                    source = System.Linq.Enumerable.ToList(source);
                 else if (dataStructure == DataStructure.Enumerable)
                 { }
                 else
                     throw new Exception("bad DataStructure");
-
-                data = __SELECT__(data, x => x + 1);
-                data = __WHERE__(data, x => x != 42);
-                data = __SELECT__(data, x => x + 1);
-                data = __WHERE__(data, x => x != 42);
-                data = __SELECT__(data, x => x + 1);
-                data = __WHERE__(data, x => x != 42);
 
                 var innerIterations = 5;
                 var totalTime = 0L;
@@ -87,6 +83,18 @@ namespace L202.Perf
 
                     for (var i = 0; i < iterations; ++i)
                     {
+                        var data = source;
+
+                        data = __SELECT__(data, x => x + 1);
+                        data = __WHERE__(data, x => x != 42);
+                        data = __SELECT__(data, x => x + 1);
+                        data = __SELECT__(data, x => x + 1);
+                        data = __SELECT__(data, x => x + 1);
+                        data = __SELECT__(data, x => x + 1);
+                        data = __SELECT__(data, x => x + 1);
+                        data = __SELECT__(data, x => x + 1);
+                        data = __SELECT__(data, x => x + 1);
+
                         switch (function)
                         {
                             case Function.Foreach:
@@ -107,7 +115,7 @@ namespace L202.Perf
 
                     System.Console.Write($"{time},");
                 }
-                System.Console.WriteLine($"{checksum}\t\t{totalTime/innerIterations}");
+                System.Console.WriteLine($"{checksum}\t\t{totalTime / innerIterations}");
             }
         }
     }
