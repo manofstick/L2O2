@@ -4,43 +4,50 @@ using static L2O2.Consumable;
 
 namespace L2O2.Core
 {
-    internal class ListEnumerable<T, U> : EnumerableWithTransform<T, U>
+    internal class ListEnumerable<T, U, V> : EnumerableWithComposition<T, U, V>
     {
         private readonly List<T> list;
 
-        public ListEnumerable(List<T> list, ISeqTransform<T, U> transform)
-            : base(transform)
+        public ListEnumerable(List<T> list, ISeqTransform<T, U> first, ISeqTransform<U, V> second)
+            : base(first, second)
         {
             this.list = list;
         }
 
-        public override IEnumerator<U> GetEnumerator()
+        public override IEnumerator<V> GetEnumerator()
         {
             if (list.Count == 0)
-                return Utils.EmptyEnumerator<U>.Instance;
+                return Utils.EmptyEnumerator<V>.Instance;
 
-            if (transform is SelectImpl<T, U> t2u)
-                return GetEnumerator_Select(t2u);
+            if (ReferenceEquals(first, IdentityTransform<T>.Instance) && second is SelectImpl<T, V> t2v)
+                return GetEnumerator_Select(t2v);
 
-            return ListEnumerator<T, U>.Create(list, this);
+            return ListEnumerator<T, V>.Create(list, this);
         }
 
-        private IEnumerator<U> GetEnumerator_Select(SelectImpl<T, U> t2u)
+        private IEnumerator<V> GetEnumerator_Select(SelectImpl<T, V> t2v)
         {
-            var f = t2u.selector;
+            var f = t2v.selector;
             foreach (var item in list)
                 yield return f(item);
         }
 
-        public override IConsumableSeq<V> Transform<V>(ISeqTransform<U, V> next)
+        public override IConsumableSeq<W> Transform<W>(ISeqTransform<V, W> next)
         {
-            return new ListEnumerable<T, V>(list, CompositionTransform<T, U, V>.Combine(transform, next));
+            if (second.TryAggregate(next, out var composite))
+                return new ListEnumerable<T, U, W>(list, first, composite);
+
+            if (ReferenceEquals(first, IdentityTransform<T>.Instance))
+                return new ListEnumerable<T, V, W>(list, (ISeqTransform<T, V>)second, next);
+
+            return new ListEnumerable<T, V, W>(list, new CompositionTransform<T, U, V>(first, second), next);
         }
 
-        public override TResult Consume<TResult>(SeqConsumer<U, TResult> consumer)
+        public override Result Consume<Result>(SeqConsumer<V, Result> consumer)
         {
             const int MaxLengthToAvoidPipelineCreationCost = 5;
 
+            var transform = (ISeqTransform<T, V>)this;
             if (list.Count == 0)
                 return consumer.Result;
             else if (list.Count <= MaxLengthToAvoidPipelineCreationCost && transform.TryOwn())
@@ -49,10 +56,11 @@ namespace L2O2.Core
             return Consume_Pipeline(consumer);
         }
 
-        private TResult Consume_Owned<TResult>(SeqConsumer<U, TResult> consumer)
+        private TResult Consume_Owned<TResult>(SeqConsumer<V, TResult> consumer)
         {
             try
             {
+                var transform = (ISeqTransform<T, V>)this;
                 for (var i = 0; i < list.Count; ++i)
                 {
                     if (consumer.Halted)
@@ -70,9 +78,10 @@ namespace L2O2.Core
             return consumer.Result;
         }
 
-        private TResult Consume_Pipeline<TResult>(SeqConsumer<U, TResult> consumer)
+        private TResult Consume_Pipeline<TResult>(SeqConsumer<V, TResult> consumer)
         {
-            var activity = CreateActivityPipeline(consumer);
+            var transform = (ISeqTransform<T, V>)this;
+            var activity = transform.Compose(consumer, consumer);
             try
             {
                 for (var i = 0; i < list.Count; ++i)

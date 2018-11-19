@@ -1,5 +1,6 @@
 ﻿using L2O2.Core;
 using System;
+using System.Collections.Generic;
 
 namespace L2O2
 {
@@ -127,10 +128,13 @@ namespace L2O2
         //}
 
         internal static IConsumableSeq<TSource> Where<TSource>(
-            this IConsumableSeq<TSource> source,
+            IEnumerable<TSource> source,
             Func<TSource, bool> selector)
         {
-            return source.Transform(new WhereImpl<TSource>(selector));
+            if (source == null) throw new ArgumentNullException("source");
+            if (selector == null) throw new ArgumentNullException("selector");
+
+            return Utils.PushTransform(source, new WhereImpl<TSource>(selector));
         }
     }
 }

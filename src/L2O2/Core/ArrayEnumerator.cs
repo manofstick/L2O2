@@ -16,25 +16,22 @@ namespace L2O2.Core
             activity = null;
         }
 
-        internal static IEnumerator<TResult> Create(T[] array, EnumerableWithTransform<T, TResult> factory)
+        internal static IEnumerator<TResult> Create(T[] array, ISeqTransform<T, TResult> factory)
         {
             var arrayEnumerator = new ArrayEnumerator<T, TResult>(array);
-            arrayEnumerator.activity = factory.CreateActivityPipeline(arrayEnumerator);
+            arrayEnumerator.activity = factory.Compose(arrayEnumerator, arrayEnumerator);
             return arrayEnumerator;
         }
 
         public override bool MoveNext()
         {
-            SeqState = SeqProcessNextStates.InProcess;
-            while (idx < array.Length)
+            //SeqState = SeqProcessNextStates.InProcess;
+            while (idx < array.Length && !Halted)
             {
-                if (Halted)
-                    break;
-
                 if (activity.ProcessNext(array[idx++]))
                     return true;
             }
-            SeqState = SeqProcessNextStates.Finished;
+            //SeqState = SeqProcessNextStates.Finished;
             activity.ChainComplete();
             return false;
         }

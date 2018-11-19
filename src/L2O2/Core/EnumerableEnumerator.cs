@@ -16,10 +16,10 @@ namespace L2O2.Core
             activity = null;
         }
 
-        internal static IEnumerator<TResult> Create(IEnumerable<T> enumerable, EnumerableWithTransform<T, TResult> factory)
+        internal static IEnumerator<TResult> Create(IEnumerable<T> enumerable, ISeqTransform<T, TResult> factory)
         {
             var arrayEnumerator = new EnumerableEnumerator<T, TResult>(enumerable);
-            arrayEnumerator.activity = factory.CreateActivityPipeline(arrayEnumerator);
+            arrayEnumerator.activity = factory.Compose(arrayEnumerator, arrayEnumerator);
             return arrayEnumerator;
         }
 

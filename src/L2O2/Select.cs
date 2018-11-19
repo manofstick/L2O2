@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using L2O2.Core;
 using System;
 using System.Collections.Generic;
 
@@ -25,20 +24,14 @@ namespace L2O2
             this IEnumerable<TSource> source,
             Func<TSource, TResult> selector)
         {
-            if (source == null) throw new ArgumentNullException("source");
-            if (selector == null) throw new ArgumentNullException("selector");
-
-            return source.OfSeq().Select(selector);
+            return Consumable.Select(source, selector);
         }
 
         public static IEnumerable<TResult> Select<TSource, TResult>(
             this IEnumerable<TSource> source,
             Func<TSource, int, TResult> selector)
         {
-            if (source == null) throw new ArgumentNullException("source");
-            if (selector == null) throw new ArgumentNullException("selector");
-
-            return source.OfSeq().Select(selector);
+            return Consumable.Select(source, selector);
         }
     }
 }

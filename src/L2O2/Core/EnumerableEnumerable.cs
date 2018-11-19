@@ -4,39 +4,46 @@ using static L2O2.Consumable;
 
 namespace L2O2.Core
 {
-    internal class EnumerableEnumerable<T, U> : EnumerableWithTransform<T, U>
+    internal class EnumerableEnumerable<T, U, V> : EnumerableWithComposition<T, U, V>
     {
         private readonly IEnumerable<T> enumerable;
 
-        public EnumerableEnumerable(IEnumerable<T> enumerable, ISeqTransform<T, U> transform)
-            : base(transform)
+        public EnumerableEnumerable(IEnumerable<T> enumerable, ISeqTransform<T, U> first, ISeqTransform<U, V> second)
+            : base(first, second)
         {
             this.enumerable = enumerable;
         }
 
-        public override IEnumerator<U> GetEnumerator()
+        public override IEnumerator<V> GetEnumerator()
         {
-            if (transform is SelectImpl<T, U> t2u)
-                return GetEnumerator_Select(t2u);
+            if (ReferenceEquals(first, IdentityTransform<T>.Instance) && second is SelectImpl<T, V> t2v)
+                return GetEnumerator_Select(t2v);
 
-            return EnumerableEnumerator<T, U>.Create(enumerable, this);
+            return EnumerableEnumerator<T, V>.Create(enumerable, this);
         }
 
-        private IEnumerator<U> GetEnumerator_Select(SelectImpl<T, U> t2u)
+        private IEnumerator<V> GetEnumerator_Select(SelectImpl<T, V> t2u)
         {
             var f = t2u.selector;
             foreach (var item in enumerable)
                 yield return f(item);
         }
 
-        public override IConsumableSeq<V> Transform<V>(ISeqTransform<U, V> next)
+        public override IConsumableSeq<W> Transform<W>(ISeqTransform<V, W> next)
         {
-            return new EnumerableEnumerable<T, V>(enumerable, CompositionTransform<T, U, V>.Combine(transform, next));
+            if (second.TryAggregate(next, out var composite))
+                return new EnumerableEnumerable<T, U, W>(enumerable, first, composite);
+
+            if (ReferenceEquals(first, IdentityTransform<T>.Instance))
+                return new EnumerableEnumerable<T, V, W>(enumerable, (ISeqTransform<T, V>)second, next);
+
+            return new EnumerableEnumerable<T, V, W>(enumerable, new CompositionTransform<T, U, V>(first, second), next);
         }
 
-        public override TResult Consume<TResult>(SeqConsumer<U, TResult> consumer)
+        public override TResult Consume<TResult>(SeqConsumer<V, TResult> consumer)
         {
-            var activity = CreateActivityPipeline(consumer);
+            var transform = (ISeqTransform<T, V>)this;
+            var activity = transform.Compose(consumer, consumer);
             try
             {
                 foreach(var item in enumerable)

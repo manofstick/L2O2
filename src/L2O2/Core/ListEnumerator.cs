@@ -4,33 +4,34 @@ namespace L2O2.Core
 {
     internal class ListEnumerator<T, TResult> : EnumeratorBase<TResult>
     {
-        private readonly List<T> list;
-        private SeqConsumerActivity<T, TResult> activity;
+        private List<T> list;
         private int idx;
+        private SeqConsumerActivity<T, TResult> activity = null;
 
         internal override SeqConsumerActivity Activity => activity;
 
         private ListEnumerator(List<T> list)
         {
             this.list = list;
+            activity = null;
         }
 
-        internal static IEnumerator<TResult> Create(List<T> list, EnumerableWithTransform<T, TResult> factory)
+        internal static IEnumerator<TResult> Create(List<T> list, ISeqTransform<T, TResult> factory)
         {
-            var enumerator = new ListEnumerator<T, TResult>(list);
-            enumerator.activity = factory.CreateActivityPipeline(enumerator);
-            return enumerator;
+            var listEnumerator = new ListEnumerator<T, TResult>(list);
+            listEnumerator.activity = factory.Compose(listEnumerator, listEnumerator);
+            return listEnumerator;
         }
 
         public override bool MoveNext()
         {
-            SeqState = SeqProcessNextStates.InProcess;
-            while (!Halted && idx < list.Count)
+            //SeqState = SeqProcessNextStates.InProcess;
+            while (idx < list.Count && !Halted)
             {
                 if (activity.ProcessNext(list[idx++]))
                     return true;
             }
-            SeqState = SeqProcessNextStates.Finished;
+            //SeqState = SeqProcessNextStates.Finished;
             activity.ChainComplete();
             return false;
         }

@@ -34,7 +34,7 @@ namespace L2O2
                 throw new ArgumentNullException("predicate");
             }
 
-            return source.OfSeq().All(predicate);
+            return Utils.OfSeq(source).All(predicate);
         }
     }
 }

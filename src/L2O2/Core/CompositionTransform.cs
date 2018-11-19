@@ -10,7 +10,7 @@ namespace L2O2.Core
 	    internal ISeqTransform<U, V> second;
 	    internal ISeqTransform<T, U> first;
 
-	    private CompositionTransform(ISeqTransform<T, U> first, ISeqTransform<U, V> second)
+	    public CompositionTransform(ISeqTransform<T, U> first, ISeqTransform<U, V> second)
 	    {
 		    this.first = first;
 		    this.second = second;
@@ -21,7 +21,7 @@ namespace L2O2.Core
             if (first.TryAggregate(second, out var composite))
                 return composite;
 
-		    return new CompositionTransform<T, U, V>(first, second);
+            return new CompositionTransform<T, U, V>(first, second);
 	    }
 
         public bool TryAggregate<W>(ISeqTransform<V, W> next, out ISeqTransform<T, W> composite)
