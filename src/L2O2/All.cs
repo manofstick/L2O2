@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using L2O2.Core;
 using System;
 using System.Collections.Generic;
 
@@ -25,16 +24,7 @@ namespace L2O2
             this IEnumerable<TSource> source,
             Func<TSource, bool> predicate)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
-            if (predicate == null)
-            {
-                throw new ArgumentNullException("predicate");
-            }
-
-            return Utils.OfSeq(source).All(predicate);
+            return Consumable.All(source, predicate);
         }
     }
 }

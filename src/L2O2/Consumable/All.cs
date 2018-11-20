@@ -1,5 +1,6 @@
 ﻿using L2O2.Core;
 using System;
+using System.Collections.Generic;
 
 namespace L2O2
 {
@@ -27,10 +28,13 @@ namespace L2O2
         }
 
         internal static bool All<TSource>(
-            this Consumable<TSource> source,
-            Func<TSource, bool> selector)
+            this IEnumerable<TSource> source,
+            Func<TSource, bool> predicate)
         {
-            return source.Consume(new AllImpl<TSource>(selector));
+            if (source == null) throw new ArgumentNullException("source");
+            if (predicate == null) throw new ArgumentNullException("predicate");
+
+            return Utils.Consume(source, new AllImpl<TSource>(predicate));
         }
     }
 }
