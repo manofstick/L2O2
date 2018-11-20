@@ -18,20 +18,23 @@ namespace L2O2.Core
             if (array.Length == 0)
                 return Utils.EmptyEnumerator<V>.Instance;
 
-            if (ReferenceEquals(first, IdentityTransform<T>.Instance) && second is SelectImpl<T, V> t2v)
-                return GetEnumerator_Select(t2v);
+            if (ReferenceEquals(first, IdentityTransform<T>.Instance))
+            {
+                if (second is SelectImpl<T, V> t2v)
+                    return GetEnumerator_Select(t2v);
+            }
 
             return ArrayEnumerator<T, V>.Create(array, this);
         }
 
         private IEnumerator<V> GetEnumerator_Select(SelectImpl<T, V> t2v)
         {
-            var f = t2v.selector;
+            var f = t2v.Selector;
             foreach (var item in array)
                 yield return f(item);
         }
 
-        public override Consumable<W> Transform<W>(ISeqTransform<V, W> next)
+        public override Consumable<W> AddTail<W>(ISeqTransform<V, W> next)
         {
             if (ReferenceEquals(first, IdentityTransform<T>.Instance))
                 return new ArrayEnumerable<T, V, W>(array, (ISeqTransform<T, V>)second, next);
@@ -100,6 +103,7 @@ namespace L2O2.Core
 
         public override Consumable<W> ReplaceTail<U_alias, W>(ISeqTransform<U_alias, W> selectImpl)
         {
+            System.Diagnostics.Debug.Assert(typeof(U) == typeof(U_alias));
             return new ArrayEnumerable<T, U, W>(array, first, (ISeqTransform<U,W>)selectImpl);
         }
     }

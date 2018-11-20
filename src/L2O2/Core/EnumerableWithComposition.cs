@@ -7,7 +7,7 @@ namespace L2O2.Core
         protected readonly ISeqTransform<T, U> first;
         protected readonly ISeqTransform<U, V> second;
 
-        public override ISeqTransform<V> TailTransform => second;
+        public override ISeqTransform<V> Tail => second;
 
         protected EnumerableWithComposition(ISeqTransform<T, U> first, ISeqTransform<U, V> second)
         {

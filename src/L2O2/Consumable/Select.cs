@@ -13,26 +13,26 @@ namespace L2O2
 
         internal class SelectImpl<T, U> : SelectImpl<U>, ISeqTransform<T, U>
         {
-            internal readonly Func<T, U> selector;
-
             public SelectImpl(Func<T, U> selector)
             {
-                this.selector = selector;
+                this.Selector = selector;
             }
+
+            public Func<T, U> Selector { get; }
 
             public override Consumable<V> AddSelector<V>(Consumable<U> consumer, Func<U, V> u2v)
             {
-                return consumer.ReplaceTail(new SelectImpl<T, U, V>(selector, u2v));
+                return consumer.ReplaceTail(new SelectImpl<T, U, V>(Selector, u2v));
             }
 
             public SeqConsumerActivity<T, V> Compose<V>(ISeqConsumer consumer, SeqConsumerActivity<U, V> activity)
             {
-                return new Activity<V>(selector, activity);
+                return new Activity<V>(Selector, activity);
             }
 
             public bool OwnedProcessNext(T t, out U u)
             {
-                u = selector(t);
+                u = Selector(t);
                 return true;
             }
 
@@ -61,8 +61,8 @@ namespace L2O2
 
         internal class SelectImpl<T, U, V> : SelectImpl<T, V>
         {
-            private Func<T, U> t2u;
-            private Func<U, V> u2v;
+            private readonly Func<T, U> t2u;
+            private readonly Func<U, V> u2v;
 
             public SelectImpl(Func<T, U> t2u, Func<U, V> u2v)
                 : base (t => u2v(t2u(t)))
@@ -79,9 +79,9 @@ namespace L2O2
 
         internal class SelectImpl<T, U, V, W> : SelectImpl<T, W>
         {
-            private Func<T, U> t2u;
-            private Func<U, V> u2v;
-            private Func<V, W> v2w;
+            private readonly Func<T, U> t2u;
+            private readonly Func<U, V> u2v;
+            private readonly Func<V, W> v2w;
 
             public SelectImpl(Func<T, U> t2u, Func<U, V> u2v, Func<V, W> v2w)
                 : base(t => v2w(u2v(t2u(t))))
@@ -104,6 +104,11 @@ namespace L2O2
             {}
         }
 
+        private static SelectImpl<TSource, TResult> CreateSelect<TSource, TResult>(Func<TSource, TResult> selector)
+        {
+            return new SelectImpl<TSource, TResult>(selector);
+        }
+
         internal static Consumable<TResult> Select<TSource, TResult>(
             IEnumerable<TSource> source,
             Func<TSource, TResult> selector)
@@ -114,7 +119,7 @@ namespace L2O2
             switch (source)
             {
                 case Consumable<TSource> consumable:
-                    switch (consumable.TailTransform)
+                    switch (consumable.Tail)
                     {
                         case SelectImpl<TSource> select:
                             return select.AddSelector(consumable, selector);
@@ -122,13 +127,11 @@ namespace L2O2
                         default:
                             break;
                     }
-                    break;
+                    return consumable.AddTail(CreateSelect(selector));
 
                 default:
-                    break;
+                    return Utils.CreateConsumable(source, CreateSelect(selector));
             }
-
-            return Utils.PushTransform(source, new SelectImpl<TSource, TResult>(selector));
         }
     }
 

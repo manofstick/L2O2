@@ -24,12 +24,12 @@ namespace L2O2.Core
 
         private IEnumerator<V> GetEnumerator_Select(SelectImpl<T, V> t2u)
         {
-            var f = t2u.selector;
+            var f = t2u.Selector;
             foreach (var item in enumerable)
                 yield return f(item);
         }
 
-        public override Consumable<W> Transform<W>(ISeqTransform<V, W> next)
+        public override Consumable<W> AddTail<W>(ISeqTransform<V, W> next)
         {
             if (ReferenceEquals(first, IdentityTransform<T>.Instance))
                 return new EnumerableEnumerable<T, V, W>(enumerable, (ISeqTransform<T, V>)second, next);
