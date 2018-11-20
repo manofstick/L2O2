@@ -15,12 +15,6 @@
             return true;
         }
 
-        public bool TryAggregate<V>(ISeqTransform<T, V> next, out ISeqTransform<T, V> composite)
-        {
-            composite = next;
-            return true;
-        }
-
         public bool TryOwn()
         {
             return true;

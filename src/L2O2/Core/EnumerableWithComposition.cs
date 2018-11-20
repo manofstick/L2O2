@@ -7,6 +7,8 @@ namespace L2O2.Core
         protected readonly ISeqTransform<T, U> first;
         protected readonly ISeqTransform<U, V> second;
 
+        public override ISeqTransform<V> TailTransform => second;
+
         protected EnumerableWithComposition(ISeqTransform<T, U> first, ISeqTransform<U, V> second)
         {
             this.first = first;
@@ -18,18 +20,6 @@ namespace L2O2.Core
             return ReferenceEquals(first, IdentityTransform<T>.Instance)
                     ? (ISeqTransform<T, V>)second
                     : this;
-        }
-
-        bool ISeqTransform<T, V>.TryAggregate<W>(ISeqTransform<V, W> next, out ISeqTransform<T, W> composite)
-        {
-            if (second.TryAggregate(next, out var secondAndNext))
-            {
-                composite = new CompositionTransform<T, U, W>(first, secondAndNext);
-                return true;
-            }
-
-            composite = null;
-            return false;
         }
 
         bool ISeqTransform<T, V>.TryOwn()

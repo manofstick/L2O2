@@ -34,19 +34,6 @@ namespace L2O2
                 }
             }
 
-            virtual public bool TryAggregate<U>(ISeqTransform<T, U> next, out ISeqTransform<T, U> composite)
-            {
-                composite = null;
-                return false;
-                //if (next is WhereImpl<U, V> u2v)
-                //{
-                //    composite = new WhereImpl<T, U, V>(selector, u2v.selector);
-                //    return true;
-                //}
-                //composite = null;
-                //return false;
-            }
-
             public bool TryOwn()
             {
                 return true;
@@ -82,18 +69,6 @@ namespace L2O2
         //        this.u2v = u2v;
         //    }
 
-        //    public override bool TryAggregate<W>(ISeqTransform<V, W> next, out ISeqTransform<T, W> composite)
-        //    {
-        //        if (next is WhereImpl<V, W> v2w)
-        //        {
-        //            composite = new WhereImpl<T, U, V, W>(t2u, u2v, v2w.selector);
-        //            return true;
-        //        }
-        //        composite = null;
-        //        return false;
-        //    }
-        //}
-
         //internal class WhereImpl<T, U, V, W> : WhereImpl<T, W>
         //{
         //    private Func<T, U> t2u;
@@ -107,18 +82,6 @@ namespace L2O2
         //        this.u2v = u2v;
         //        this.v2w = v2w;
         //    }
-
-        //    public override bool TryAggregate<X>(ISeqTransform<W, X> next, out ISeqTransform<T, X> composite)
-        //    {
-        //        if (next is WhereImpl<W, X> w2x)
-        //        {
-        //            composite = new WhereImpl<T, U, V, W, X>(t2u, u2v, v2w, w2x.selector);
-        //            return true;
-        //        }
-        //        composite = null;
-        //        return false;
-        //    }
-        //}
 
         //internal class WhereImpl<T, U, V, W, X> : WhereImpl<T, X>
         //{

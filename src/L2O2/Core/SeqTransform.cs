@@ -11,12 +11,6 @@ namespace L2O2.Core
             throw new NotImplementedException();
         }
 
-        public virtual bool TryAggregate<V>(ISeqTransform<U, V> next, out ISeqTransform<T, V> composite)
-        {
-            composite = null;
-            return false;
-        }
-
         public virtual bool TryOwn() => false;
     }
 }

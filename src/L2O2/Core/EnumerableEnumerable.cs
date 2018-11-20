@@ -31,9 +31,6 @@ namespace L2O2.Core
 
         public override Consumable<W> Transform<W>(ISeqTransform<V, W> next)
         {
-            if (second.TryAggregate(next, out var composite))
-                return new EnumerableEnumerable<T, U, W>(enumerable, first, composite);
-
             if (ReferenceEquals(first, IdentityTransform<T>.Instance))
                 return new EnumerableEnumerable<T, V, W>(enumerable, (ISeqTransform<T, V>)second, next);
 
@@ -60,6 +57,11 @@ namespace L2O2.Core
                 activity.ChainDispose();
             }
             return consumer.Result;
+        }
+
+        public override Consumable<W> ReplaceTail<U_alias, W>(ISeqTransform<U_alias, W> selectImpl)
+        {
+            return new EnumerableEnumerable<T, U, W>(enumerable, first, (ISeqTransform<U, W>)selectImpl);
         }
     }
 }

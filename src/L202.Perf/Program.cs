@@ -38,7 +38,7 @@ namespace L202.Perf
                 Func<IEnumerable<int>, Func<int, bool>, bool> __ALL__,
                 Func<IEnumerable<int>, Func<int, bool>, IEnumerable<int>> __WHERE__
             ) =
-#if true
+#if falae
             (
                 "L2O2",
                 L2O2.Enumerable.Select,
@@ -57,7 +57,7 @@ namespace L202.Perf
 #endif
             System.Console.WriteLine($"{__FUNCTIONS__} {dataStructure} {function} ({DateTime.Now})\n--");
 
-            for (var orderIdx = 0; orderIdx < 10; ++orderIdx)
+            for (var orderIdx = 1; orderIdx < 10; ++orderIdx)
             {
                 var elements = (int)Math.Pow(2, orderIdx) - 1;
                 var iterations = 10000000 / (elements + 1);

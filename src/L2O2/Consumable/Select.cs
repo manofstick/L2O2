@@ -6,13 +6,23 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        internal class SelectImpl<T, U> : ISeqTransform<T, U>
+        internal abstract class SelectImpl<T> : ISeqTransform<T>
+        {
+            public abstract Consumable<U> AddSelector<U>(Consumable<T> consumer, Func<T, U> t2u);
+        }
+
+        internal class SelectImpl<T, U> : SelectImpl<U>, ISeqTransform<T, U>
         {
             internal readonly Func<T, U> selector;
 
             public SelectImpl(Func<T, U> selector)
             {
                 this.selector = selector;
+            }
+
+            public override Consumable<V> AddSelector<V>(Consumable<U> consumer, Func<U, V> u2v)
+            {
+                return consumer.ReplaceTail(new SelectImpl<T, U, V>(selector, u2v));
             }
 
             public SeqConsumerActivity<T, V> Compose<V>(ISeqConsumer consumer, SeqConsumerActivity<U, V> activity)
@@ -24,17 +34,6 @@ namespace L2O2
             {
                 u = selector(t);
                 return true;
-            }
-
-            virtual public bool TryAggregate<V>(ISeqTransform<U, V> next, out ISeqTransform<T, V> composite)
-            {
-                if (next is SelectImpl<U,V> u2v)
-                {
-                    composite = new SelectImpl<T,U,V>(selector, u2v.selector);
-                    return true;
-                }
-                composite = null;
-                return false;
             }
 
             public bool TryOwn()
@@ -72,15 +71,9 @@ namespace L2O2
                 this.u2v = u2v;
             }
 
-            public override bool TryAggregate<W>(ISeqTransform<V, W> next, out ISeqTransform<T, W> composite)
+            public override Consumable<W> AddSelector<W>(Consumable<V> consumer, Func<V, W> v2w)
             {
-                if (next is SelectImpl<V, W> v2w)
-                {
-                    composite = new SelectImpl<T,U,V,W>(t2u,u2v,v2w.selector);
-                    return true;
-                }
-                composite = null;
-                return false;
+                return consumer.ReplaceTail(new SelectImpl<T, U, V, W>(t2u, u2v, v2w));
             }
         }
 
@@ -98,15 +91,9 @@ namespace L2O2
                 this.v2w = v2w;
             }
 
-            public override bool TryAggregate<X>(ISeqTransform<W, X> next, out ISeqTransform<T, X> composite)
+            public override Consumable<X> AddSelector<X>(Consumable<W> consumer, Func<W, X> w2x)
             {
-                if (next is SelectImpl<W, X> w2x)
-                {
-                    composite = new SelectImpl<T, U, V, W, X>(t2u, u2v, v2w, w2x.selector);
-                    return true;
-                }
-                composite = null;
-                return false;
+                return consumer.ReplaceTail(new SelectImpl<T, U, V, W, X>(t2u, u2v, v2w, w2x));
             }
         }
 
@@ -123,6 +110,23 @@ namespace L2O2
         {
             if (source == null) throw new ArgumentNullException("source");
             if (selector == null) throw new ArgumentNullException("selector");
+
+            switch (source)
+            {
+                case Consumable<TSource> consumable:
+                    switch (consumable.TailTransform)
+                    {
+                        case SelectImpl<TSource> select:
+                            return select.AddSelector(consumable, selector);
+
+                        default:
+                            break;
+                    }
+                    break;
+
+                default:
+                    break;
+            }
 
             return Utils.PushTransform(source, new SelectImpl<TSource, TResult>(selector));
         }
