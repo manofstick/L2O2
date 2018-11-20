@@ -29,7 +29,7 @@ namespace L2O2.Core
                 yield return f(item);
         }
 
-        public override IConsumableSeq<W> Transform<W>(ISeqTransform<V, W> next)
+        public override Consumable<W> Transform<W>(ISeqTransform<V, W> next)
         {
             if (second.TryAggregate(next, out var composite))
                 return new EnumerableEnumerable<T, U, W>(enumerable, first, composite);

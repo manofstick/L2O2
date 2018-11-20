@@ -2,7 +2,7 @@
 
 namespace L2O2.Core
 {
-    internal abstract class EnumerableWithComposition<T, U, V> : EnumerableBase<V>, ISeqTransform<T, V>
+    internal abstract class EnumerableWithComposition<T, U, V> : Consumable<V>, ISeqTransform<T, V>
     {
         protected readonly ISeqTransform<T, U> first;
         protected readonly ISeqTransform<U, V> second;
@@ -11,6 +11,13 @@ namespace L2O2.Core
         {
             this.first = first;
             this.second = second;
+        }
+
+        protected ISeqTransform<T, V> GetTransform()
+        {
+            return ReferenceEquals(first, IdentityTransform<T>.Instance)
+                    ? (ISeqTransform<T, V>)second
+                    : this;
         }
 
         bool ISeqTransform<T, V>.TryAggregate<W>(ISeqTransform<V, W> next, out ISeqTransform<T, W> composite)

@@ -60,7 +60,7 @@ namespace L2O2
             }
         }
 
-        internal static IConsumableSeq<TResult> Select<TSource, TResult>(
+        internal static Consumable<TResult> Select<TSource, TResult>(
             IEnumerable<TSource> source,
             Func<TSource, int, TResult> selector)
         {

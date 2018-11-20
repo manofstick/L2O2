@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using static L2O2.Consumable;
 
 namespace L2O2.Core
@@ -32,7 +31,7 @@ namespace L2O2.Core
                 yield return f(item);
         }
 
-        public override IConsumableSeq<W> Transform<W>(ISeqTransform<V, W> next)
+        public override Consumable<W> Transform<W>(ISeqTransform<V, W> next)
         {
             if (second.TryAggregate(next, out var composite))
                 return new ArrayEnumerable<T, U, W>(array, first, composite);
@@ -47,20 +46,23 @@ namespace L2O2.Core
         {
             const int MaxLengthToAvoidPipelineCreationCost = 5;
 
-            var transform = (ISeqTransform<T, V>)this;
             if (array.Length == 0)
                 return consumer.Result;
-            else if (array.Length <= MaxLengthToAvoidPipelineCreationCost && transform.TryOwn())
-                return Consume_Owned(consumer);
+            else
+            {
+                var transform = GetTransform();
 
-            return Consume_Pipeline(consumer);
+                if (array.Length <= MaxLengthToAvoidPipelineCreationCost && transform.TryOwn())
+                    return Consume_Owned(transform, consumer);
+
+                return Consume_Pipeline(transform, consumer);
+            }
         }
 
-        private TResult Consume_Owned<TResult>(SeqConsumer<V, TResult> consumer)
+        private TResult Consume_Owned<TResult>(ISeqTransform<T, V> transform, SeqConsumer<V, TResult> consumer)
         {
             try
             {
-                var transform = (ISeqTransform<T, V>)this;
                 for (var i = 0; i < array.Length; ++i)
                 {
                     if (consumer.Halted)
@@ -78,9 +80,8 @@ namespace L2O2.Core
             return consumer.Result;
         }
 
-        private TResult Consume_Pipeline<TResult>(SeqConsumer<V, TResult> consumer)
+        private TResult Consume_Pipeline<TResult>(ISeqTransform<T, V> transform, SeqConsumer<V, TResult> consumer)
         {
-            var transform = (ISeqTransform<T, V>)this;
             var activity = transform.Compose(consumer, consumer);
             try
             {

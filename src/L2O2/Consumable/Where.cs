@@ -127,7 +127,7 @@ namespace L2O2
         //    { }
         //}
 
-        internal static IConsumableSeq<TSource> Where<TSource>(
+        internal static Consumable<TSource> Where<TSource>(
             IEnumerable<TSource> source,
             Func<TSource, bool> selector)
         {

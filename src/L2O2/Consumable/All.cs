@@ -27,7 +27,7 @@ namespace L2O2
         }
 
         internal static bool All<TSource>(
-            this IConsumableSeq<TSource> source,
+            this Consumable<TSource> source,
             Func<TSource, bool> selector)
         {
             return source.Consume(new AllImpl<TSource>(selector));

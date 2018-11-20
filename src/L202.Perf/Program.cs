@@ -38,7 +38,7 @@ namespace L202.Perf
                 Func<IEnumerable<int>, Func<int, bool>, bool> __ALL__,
                 Func<IEnumerable<int>, Func<int, bool>, IEnumerable<int>> __WHERE__
             ) =
-#if false
+#if true
             (
                 "L2O2",
                 L2O2.Enumerable.Select,
@@ -86,14 +86,14 @@ namespace L202.Perf
                         var data = source;
 
                         data = __SELECT__(data, x => x + 1);
-                        data = __WHERE__(data, x => x != 42);
-                        data = __SELECT__(data, x => x + 1);
-                        data = __SELECT__(data, x => x + 1);
-                        data = __SELECT__(data, x => x + 1);
-                        data = __SELECT__(data, x => x + 1);
-                        data = __SELECT__(data, x => x + 1);
-                        data = __SELECT__(data, x => x + 1);
-                        data = __SELECT__(data, x => x + 1);
+                        //data = __WHERE__(data, x => x != 42);
+                        //data = __SELECT__(data, x => x + 1);
+                        //data = __SELECT__(data, x => x + 1);
+                        //data = __SELECT__(data, x => x + 1);
+                        //data = __SELECT__(data, x => x + 1);
+                        //data = __SELECT__(data, x => x + 1);
+                        //data = __SELECT__(data, x => x + 1);
+                        //data = __SELECT__(data, x => x + 1);
 
                         switch (function)
                         {

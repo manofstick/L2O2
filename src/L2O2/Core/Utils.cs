@@ -5,11 +5,11 @@ namespace L2O2.Core
 {
     static class Utils
     {
-        internal static IConsumableSeq<T> OfSeq<T>(this System.Collections.Generic.IEnumerable<T> e)
+        internal static Consumable<T> OfSeq<T>(this System.Collections.Generic.IEnumerable<T> e)
         {
             switch (e)
             {
-                case IConsumableSeq<T> consumable:
+                case Consumable<T> consumable:
                     return consumable;
 
                 case T[] array:
@@ -23,11 +23,11 @@ namespace L2O2.Core
             }
         }
 
-        internal static IConsumableSeq<U> PushTransform<T,U>(this IEnumerable<T> e, ISeqTransform<T,U> transform)
+        internal static Consumable<U> PushTransform<T,U>(this IEnumerable<T> e, ISeqTransform<T,U> transform)
         {
             switch (e)
             {
-                case IConsumableSeq<T> consumable:
+                case Consumable<T> consumable:
                     return consumable.Transform(transform);
 
                 case T[] array:
