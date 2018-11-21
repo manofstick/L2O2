@@ -5,7 +5,8 @@ namespace L2O2.Core
     internal class ConsumableListEnumerator<T, TResult> : ConsumableEnumerator<TResult>
     {
         private List<T> list;
-        private int idx;
+        List<T>.Enumerator enumerator;
+
         private ConsumerActivity<T, TResult> activity = null;
 
         internal override ConsumerActivity Activity => activity;
@@ -14,6 +15,13 @@ namespace L2O2.Core
         {
             this.list = list;
             activity = null;
+        }
+
+        public override void ChainDispose()
+        {
+            if (list == null)
+                enumerator.Dispose();
+            list = null;
         }
 
         internal static IEnumerator<TResult> Create(List<T> list, ITransmutation<T, TResult> factory)
@@ -25,13 +33,23 @@ namespace L2O2.Core
 
         public override bool MoveNext()
         {
-            while (idx < list.Count && !Halted)
+            if (list != null)
             {
-                if (activity.ProcessNext(list[idx++]))
-                    return true;
+                enumerator = list.GetEnumerator();
+                list = null;
             }
-            activity.ChainComplete();
-            return false;
+
+        tryAgain:
+            if (!enumerator.MoveNext() || Halted)
+            {
+                activity.ChainComplete();
+                return false;
+            }
+
+            if (!activity.ProcessNext(enumerator.Current))
+                goto tryAgain;
+
+            return true;
         }
     }
 }

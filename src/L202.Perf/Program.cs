@@ -14,6 +14,7 @@ namespace L202.Perf
     {
         Array,
         List,
+        Range,
         Enumerable
     }
 
@@ -29,7 +30,7 @@ namespace L202.Perf
         static void Main(string[] args)
         {
             //var library = Library.L2O2;
-            var dataStructure = DataStructure.Array;
+            var dataStructure = DataStructure.Enumerable;
             var function = Function.Foreach;
             (
                 string __FUNCTIONS__,
@@ -73,6 +74,8 @@ namespace L202.Perf
                 else if (dataStructure == DataStructure.List)
                     source = System.Linq.Enumerable.ToList(source);
                 else if (dataStructure == DataStructure.Enumerable)
+                    source = GetEnumerable(elements);
+                else if (dataStructure == DataStructure.Range)
                 { }
                 else
                     throw new Exception("bad DataStructure");
@@ -121,6 +124,12 @@ namespace L202.Perf
                 }
                 System.Console.WriteLine($"{checksum}\t\t{totalTime / innerIterations}");
             }
+        }
+
+        private static IEnumerable<int> GetEnumerable(int elements)
+        {
+            for (var i = 0; i < elements; ++i)
+                yield return i;
         }
     }
 }

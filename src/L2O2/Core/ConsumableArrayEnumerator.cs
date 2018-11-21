@@ -16,6 +16,12 @@ namespace L2O2.Core
             activity = null;
         }
 
+        public override void ChainDispose()
+        {
+            array = null;
+            activity = null;
+        }
+
         internal static IEnumerator<TResult> Create(T[] array, ITransmutation<T, TResult> factory)
         {
             var arrayEnumerator = new ConsumableArrayEnumerator<T, TResult>(array);
@@ -25,13 +31,17 @@ namespace L2O2.Core
 
         public override bool MoveNext()
         {
-            while (idx < array.Length && !Halted)
+        tryAgain:
+            if (idx >= array.Length || Halted)
             {
-                if (activity.ProcessNext(array[idx++]))
-                    return true;
+                activity.ChainComplete();
+                return false;
             }
-            activity.ChainComplete();
-            return false;
+
+            if (!activity.ProcessNext(array[idx++]))
+                goto tryAgain;
+
+            return true;
         }
     }
 }

@@ -16,6 +16,17 @@ namespace L2O2.Core
             activity = null;
         }
 
+        public override void ChainDispose()
+        {
+            if (enumerator != null)
+            {
+                enumerator.Dispose();
+                enumerator = null;
+            }
+            enumerable = null;
+            activity = null;
+        }
+
         internal static IEnumerator<TResult> Create(IEnumerable<T> enumerable, ITransmutation<T, TResult> factory)
         {
             var arrayEnumerator = new ConsumableEnumerableEnumerator<T, TResult>(enumerable);
@@ -31,17 +42,17 @@ namespace L2O2.Core
                 enumerable = null;
             }
 
-            while (enumerator.MoveNext())
+        tryAgain:
+            if (!enumerator.MoveNext() || Halted)
             {
-                if (Halted)
-                    break;
-
-                if (activity.ProcessNext(enumerator.Current))
-                    return true;
+                activity.ChainComplete();
+                return false;
             }
 
-            activity.ChainComplete();
-            return false;
+            if (!activity.ProcessNext(enumerator.Current))
+                goto tryAgain;
+
+            return true;
         }
     }
 }
