@@ -30,7 +30,7 @@ namespace L202.Perf
         static void Main(string[] args)
         {
             //var library = Library.L2O2;
-            var dataStructure = DataStructure.Enumerable;
+            var dataStructure = DataStructure.Array;
             var function = Function.Foreach;
             (
                 string __FUNCTIONS__,
@@ -38,7 +38,8 @@ namespace L202.Perf
                 Func<IEnumerable<int>, Func<int, int, int>, IEnumerable<int>> __SELECTI__,
                 Func<IEnumerable<int>, Func<int, bool>, bool> __ALL__,
                 Func<IEnumerable<int>, Func<int, bool>, IEnumerable<int>> __WHERE__,
-                Func<IEnumerable<int>, Func<int, int,bool>, IEnumerable<int>> __WHEREI__
+                Func<IEnumerable<int>, Func<int, int, bool>, IEnumerable<int>> __WHEREI__,
+                Func<IEnumerable<int>, IEnumerable<int>> __DISTINCT__
             ) =
 #if false
             (
@@ -47,7 +48,8 @@ namespace L202.Perf
                 L2O2.Enumerable.Select,
                 L2O2.Enumerable.All,
                 L2O2.Enumerable.Where,
-                L2O2.Enumerable.Where
+                L2O2.Enumerable.Where,
+                L2O2.Enumerable.Distinct
             );
 #else
             (
@@ -56,7 +58,8 @@ namespace L202.Perf
                 System.Linq.Enumerable.Select,
                 System.Linq.Enumerable.All,
                 System.Linq.Enumerable.Where,
-                System.Linq.Enumerable.Where
+                System.Linq.Enumerable.Where,
+                System.Linq.Enumerable.Distinct
             );
 #endif
             System.Console.WriteLine($"{__FUNCTIONS__} {dataStructure} {function} ({DateTime.Now})\n--");
@@ -91,8 +94,9 @@ namespace L202.Perf
                     {
                         var data = source;
 
-                        data = __SELECT__(data, x => x + 1);
+                        data = __SELECT__(data, x => x % 1000);
                         data = __WHEREI__(data, (x,ii) => x + ii > 5);
+                        data = __DISTINCT__(data);
                         //data = __WHERE__(data, x => x != 42);
                         //data = __SELECT__(data, x => x + 1);
                         //data = __SELECT__(data, x => x + 1);
