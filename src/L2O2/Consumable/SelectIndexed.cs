@@ -6,7 +6,7 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        internal class SelectIImpl<T, U> : Transmutation<T, U>
+        internal class SelectIndexedImpl<T, U> : Transmutation<T, U>
         {
             private readonly int initialThreadId = Environment.CurrentManagedThreadId;
             private bool owned = false;
@@ -14,7 +14,7 @@ namespace L2O2
 
             internal readonly Func<T, int, U> selector;
 
-            public SelectIImpl(Func<T, int, U> selector)
+            public SelectIndexedImpl(Func<T, int, U> selector)
             {
                 this.selector = selector;
             }
@@ -66,7 +66,7 @@ namespace L2O2
             if (source == null) throw new ArgumentNullException("source");
             if (selector == null) throw new ArgumentNullException("selector");
 
-            return Utils.PushTransform(source, new SelectIImpl<TSource, TResult>(selector));
+            return Utils.PushTransform(source, new SelectIndexedImpl<TSource, TResult>(selector));
         }
     }
 }

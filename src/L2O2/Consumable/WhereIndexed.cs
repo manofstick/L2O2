@@ -6,7 +6,7 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        internal class WhereIImpl<T> : Transmutation<T, T>
+        internal class WhereIndexedImpl<T> : Transmutation<T, T>
         {
             private readonly int initialThreadId = Environment.CurrentManagedThreadId;
             private bool owned = false;
@@ -14,7 +14,7 @@ namespace L2O2
 
             internal readonly Func<T, int, bool> predicate;
 
-            public WhereIImpl(Func<T, int, bool> predicate) =>
+            public WhereIndexedImpl(Func<T, int, bool> predicate) =>
                 this.predicate = predicate;
 
             public override ConsumerActivity<T, V> Compose<V>(IOutOfBand consumer, ConsumerActivity<T, V> activity) =>
@@ -57,7 +57,7 @@ namespace L2O2
             if (source == null) throw new ArgumentNullException("source");
             if (selector == null) throw new ArgumentNullException("selector");
 
-            return Utils.PushTransform(source, new WhereIImpl<TSource>(selector));
+            return Utils.PushTransform(source, new WhereIndexedImpl<TSource>(selector));
         }
     }
 }
