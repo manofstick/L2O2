@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 namespace L2O2.Core
 {
-    internal abstract class EnumeratorBase<T> : SeqConsumer<T, T>, IEnumerator<T>
+    internal abstract class ConsumableEnumerator<T> : Consumer<T, T>, IEnumerator<T>
     {
-        protected EnumeratorBase() : base(default(T)) { }
+        protected ConsumableEnumerator() : base(default(T)) { }
 
         internal SeqProcessNextStates SeqState { get; set; } = SeqProcessNextStates.NotStarted;
 
-        internal virtual SeqConsumerActivity Activity { get; set; }
+        internal virtual ConsumerActivity Activity { get; set; }
 
         public override bool ProcessNext(T input)
         {

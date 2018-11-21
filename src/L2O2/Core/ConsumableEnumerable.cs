@@ -4,11 +4,11 @@ using static L2O2.Consumable;
 
 namespace L2O2.Core
 {
-    internal class EnumerableEnumerable<T, U, V> : EnumerableWithComposition<T, U, V>
+    internal class ConsumableEnumerable<T, U, V> : ConsumableWithComposition<T, U, V>
     {
         private readonly IEnumerable<T> enumerable;
 
-        public EnumerableEnumerable(IEnumerable<T> enumerable, ISeqTransform<T, U> first, ISeqTransform<U, V> second)
+        public ConsumableEnumerable(IEnumerable<T> enumerable, ITransmutation<T, U> first, ITransmutation<U, V> second)
             : base(first, second)
         {
             this.enumerable = enumerable;
@@ -19,7 +19,7 @@ namespace L2O2.Core
             if (ReferenceEquals(first, IdentityTransform<T>.Instance) && second is SelectImpl<T, V> t2v)
                 return GetEnumerator_Select(t2v);
 
-            return EnumerableEnumerator<T, V>.Create(enumerable, this);
+            return ConsumableEnumerableEnumerator<T, V>.Create(enumerable, this);
         }
 
         private IEnumerator<V> GetEnumerator_Select(SelectImpl<T, V> t2u)
@@ -29,17 +29,17 @@ namespace L2O2.Core
                 yield return f(item);
         }
 
-        public override Consumable<W> AddTail<W>(ISeqTransform<V, W> next)
+        public override Consumable<W> AddTail<W>(ITransmutation<V, W> next)
         {
             if (ReferenceEquals(first, IdentityTransform<T>.Instance))
-                return new EnumerableEnumerable<T, V, W>(enumerable, (ISeqTransform<T, V>)second, next);
+                return new ConsumableEnumerable<T, V, W>(enumerable, (ITransmutation<T, V>)second, next);
 
-            return new EnumerableEnumerable<T, V, W>(enumerable, new CompositionTransform<T, U, V>(first, second), next);
+            return new ConsumableEnumerable<T, V, W>(enumerable, new CompositionTransform<T, U, V>(first, second), next);
         }
 
-        public override TResult Consume<TResult>(SeqConsumer<V, TResult> consumer)
+        public override TResult Consume<TResult>(Consumer<V, TResult> consumer)
         {
-            var transform = (ISeqTransform<T, V>)this;
+            var transform = (ITransmutation<T, V>)this;
             var activity = transform.Compose(consumer, consumer);
             try
             {
@@ -59,9 +59,9 @@ namespace L2O2.Core
             return consumer.Result;
         }
 
-        public override Consumable<W> ReplaceTail<U_alias, W>(ISeqTransform<U_alias, W> selectImpl)
+        public override Consumable<W> ReplaceTail<U_alias, W>(ITransmutation<U_alias, W> selectImpl)
         {
-            return new EnumerableEnumerable<T, U, W>(enumerable, first, (ISeqTransform<U, W>)selectImpl);
+            return new ConsumableEnumerable<T, U, W>(enumerable, first, (ITransmutation<U, W>)selectImpl);
         }
     }
 }

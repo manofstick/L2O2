@@ -6,12 +6,12 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        internal abstract class SelectImpl<T> : ISeqTransform<T>
+        internal abstract class SelectImpl<T> : ITransmutation<T>
         {
             public abstract Consumable<U> AddSelector<U>(Consumable<T> consumer, Func<T, U> t2u);
         }
 
-        internal class SelectImpl<T, U> : SelectImpl<U>, ISeqTransform<T, U>
+        internal class SelectImpl<T, U> : SelectImpl<U>, ITransmutation<T, U>
         {
             public SelectImpl(Func<T, U> selector)
             {
@@ -25,7 +25,7 @@ namespace L2O2
                 return consumer.ReplaceTail(new SelectImpl<T, U, V>(Selector, u2v));
             }
 
-            public SeqConsumerActivity<T, V> Compose<V>(ISeqConsumer consumer, SeqConsumerActivity<U, V> activity)
+            public ConsumerActivity<T, V> Compose<V>(IOutOfBand consumer, ConsumerActivity<U, V> activity)
             {
                 return new Activity<V>(Selector, activity);
             }
@@ -41,12 +41,12 @@ namespace L2O2
                 return true;
             }
 
-            private class Activity<V> : SeqConsumerActivity<T, V>
+            private class Activity<V> : ConsumerActivity<T, V>
             {
                 private readonly Func<T, U> selector;
-                private readonly SeqConsumerActivity<U, V> next;
+                private readonly ConsumerActivity<U, V> next;
 
-                public Activity(Func<T, U> selector, SeqConsumerActivity<U, V> next)
+                public Activity(Func<T, U> selector, ConsumerActivity<U, V> next)
                 {
                     this.selector = selector;
                     this.next = next;

@@ -2,23 +2,23 @@
 
 namespace L2O2.Core
 {
-    internal class ListEnumerator<T, TResult> : EnumeratorBase<TResult>
+    internal class ConsumableListEnumerator<T, TResult> : ConsumableEnumerator<TResult>
     {
         private List<T> list;
         private int idx;
-        private SeqConsumerActivity<T, TResult> activity = null;
+        private ConsumerActivity<T, TResult> activity = null;
 
-        internal override SeqConsumerActivity Activity => activity;
+        internal override ConsumerActivity Activity => activity;
 
-        private ListEnumerator(List<T> list)
+        private ConsumableListEnumerator(List<T> list)
         {
             this.list = list;
             activity = null;
         }
 
-        internal static IEnumerator<TResult> Create(List<T> list, ISeqTransform<T, TResult> factory)
+        internal static IEnumerator<TResult> Create(List<T> list, ITransmutation<T, TResult> factory)
         {
-            var listEnumerator = new ListEnumerator<T, TResult>(list);
+            var listEnumerator = new ConsumableListEnumerator<T, TResult>(list);
             listEnumerator.activity = factory.Compose(listEnumerator, listEnumerator);
             return listEnumerator;
         }

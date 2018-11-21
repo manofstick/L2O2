@@ -6,7 +6,7 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        internal class WhereIImpl<T> : SeqTransform<T, T>
+        internal class WhereIImpl<T> : Transmutation<T, T>
         {
             private readonly int initialThreadId = Environment.CurrentManagedThreadId;
             private bool owned = false;
@@ -17,7 +17,7 @@ namespace L2O2
             public WhereIImpl(Func<T, int, bool> predicate) =>
                 this.predicate = predicate;
 
-            public override SeqConsumerActivity<T, V> Compose<V>(ISeqConsumer consumer, SeqConsumerActivity<T, V> activity) =>
+            public override ConsumerActivity<T, V> Compose<V>(IOutOfBand consumer, ConsumerActivity<T, V> activity) =>
                 new Activity<V>(predicate, activity);
 
             public override bool TryOwn()
@@ -33,14 +33,14 @@ namespace L2O2
             public override bool OwnedProcessNext(T tin, out T tout) =>
                 predicate(tout = tin, index++);
 
-            private class Activity<V> : SeqConsumerActivity<T, V>
+            private class Activity<V> : ConsumerActivity<T, V>
             {
                 private readonly Func<T, int, bool> predicate;
-                private readonly SeqConsumerActivity<T, V> next;
+                private readonly ConsumerActivity<T, V> next;
 
                 private int index;
 
-                public Activity(Func<T, int, bool> predicate, SeqConsumerActivity<T, V> next)
+                public Activity(Func<T, int, bool> predicate, ConsumerActivity<T, V> next)
                 {
                     this.predicate = predicate;
                     this.next = next;

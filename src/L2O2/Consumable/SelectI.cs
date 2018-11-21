@@ -6,7 +6,7 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        internal class SelectIImpl<T, U> : SeqTransform<T, U>
+        internal class SelectIImpl<T, U> : Transmutation<T, U>
         {
             private readonly int initialThreadId = Environment.CurrentManagedThreadId;
             private bool owned = false;
@@ -19,7 +19,7 @@ namespace L2O2
                 this.selector = selector;
             }
 
-            public override SeqConsumerActivity<T, V> Compose<V>(ISeqConsumer consumer, SeqConsumerActivity<U, V> activity)
+            public override ConsumerActivity<T, V> Compose<V>(IOutOfBand consumer, ConsumerActivity<U, V> activity)
             {
                 return new Activity<V>(selector, activity);
             }
@@ -40,14 +40,14 @@ namespace L2O2
                 return true;
             }
 
-            private class Activity<V> : SeqConsumerActivity<T, V>
+            private class Activity<V> : ConsumerActivity<T, V>
             {
                 private readonly Func<T, int, U> selector;
-                private readonly SeqConsumerActivity<U, V> next;
+                private readonly ConsumerActivity<U, V> next;
 
                 private int index;
 
-                public Activity(Func<T, int, U> selector, SeqConsumerActivity<U, V> next)
+                public Activity(Func<T, int, U> selector, ConsumerActivity<U, V> next)
                 {
                     this.selector = selector;
                     this.next = next;

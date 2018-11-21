@@ -5,22 +5,22 @@ namespace L2O2.Core
 {
     static class Utils
     {
-        internal static Consumable<U> CreateConsumable<T, U>(IEnumerable<T> e, ISeqTransform<T, U> transform)
+        internal static Consumable<U> CreateConsumable<T, U>(IEnumerable<T> e, ITransmutation<T, U> transform)
         {
             switch (e)
             {
                 case T[] array:
-                    return new ArrayEnumerable<T, T, U>(array, IdentityTransform<T>.Instance, transform);
+                    return new ConsumableArray<T, T, U>(array, IdentityTransform<T>.Instance, transform);
 
                 case List<T> list:
-                    return new ListEnumerable<T, T, U>(list, IdentityTransform<T>.Instance, transform);
+                    return new ConsumableList<T, T, U>(list, IdentityTransform<T>.Instance, transform);
 
                 default:
-                    return new EnumerableEnumerable<T, T, U>(e, IdentityTransform<T>.Instance, transform);
+                    return new ConsumableEnumerable<T, T, U>(e, IdentityTransform<T>.Instance, transform);
             }
         }
 
-        internal static Consumable<U> PushTransform<T, U>(IEnumerable<T> e, ISeqTransform<T, U> transform)
+        internal static Consumable<U> PushTransform<T, U>(IEnumerable<T> e, ITransmutation<T, U> transform)
         {
             switch (e)
             {
@@ -32,7 +32,7 @@ namespace L2O2.Core
             }
         }
 
-        internal static Result Consume<T, Result>(IEnumerable<T> e, SeqConsumer<T, Result> consumer)
+        internal static Result Consume<T, Result>(IEnumerable<T> e, Consumer<T, Result> consumer)
         {
             switch (e)
             {

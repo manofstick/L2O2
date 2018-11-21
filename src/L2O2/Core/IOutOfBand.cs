@@ -2,7 +2,7 @@
 
 namespace L2O2.Core
 {
-    interface ISeqConsumer
+    interface IOutOfBand
     {
         void StopFurtherProcessing();
         void ListenForStopFurtherProcessing(Action a);

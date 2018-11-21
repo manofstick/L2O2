@@ -1,19 +1,19 @@
 ﻿namespace L2O2.Core
 {
-    abstract class SeqConsumerActivity
+    abstract class ConsumerActivity
     {
         public virtual void ChainComplete() { }
         public virtual void ChainDispose() { }
     }
 
-    abstract class SeqConsumerActivity<T>
-        : SeqConsumerActivity
+    abstract class ConsumerActivity<T>
+        : ConsumerActivity
     {
         public abstract bool ProcessNext(T input);
     }
 
-    abstract class SeqConsumerActivity<T,U>
-        : SeqConsumerActivity<T>
+    abstract class ConsumerActivity<T,U>
+        : ConsumerActivity<T>
     {
     }
 }

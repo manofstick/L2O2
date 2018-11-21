@@ -3,11 +3,11 @@ using static L2O2.Consumable;
 
 namespace L2O2.Core
 {
-    internal class ArrayEnumerable<T, U, V> : EnumerableWithComposition<T, U, V>
+    internal class ConsumableArray<T, U, V> : ConsumableWithComposition<T, U, V>
     {
         private readonly T[] array;
 
-        public ArrayEnumerable(T[] array, ISeqTransform<T, U> first, ISeqTransform<U, V> second)
+        public ConsumableArray(T[] array, ITransmutation<T, U> first, ITransmutation<U, V> second)
             : base(first, second)
         {
             this.array = array;
@@ -24,7 +24,7 @@ namespace L2O2.Core
                     return GetEnumerator_Select(t2v);
             }
 
-            return ArrayEnumerator<T, V>.Create(array, this);
+            return ConsumableArrayEnumerator<T, V>.Create(array, this);
         }
 
         private IEnumerator<V> GetEnumerator_Select(SelectImpl<T, V> t2v)
@@ -34,15 +34,15 @@ namespace L2O2.Core
                 yield return f(item);
         }
 
-        public override Consumable<W> AddTail<W>(ISeqTransform<V, W> next)
+        public override Consumable<W> AddTail<W>(ITransmutation<V, W> next)
         {
             if (ReferenceEquals(first, IdentityTransform<T>.Instance))
-                return new ArrayEnumerable<T, V, W>(array, (ISeqTransform<T, V>)second, next);
+                return new ConsumableArray<T, V, W>(array, (ITransmutation<T, V>)second, next);
 
-            return new ArrayEnumerable<T, V, W>(array, new CompositionTransform<T, U, V>(first, second), next);
+            return new ConsumableArray<T, V, W>(array, new CompositionTransform<T, U, V>(first, second), next);
         }
 
-        public override Result Consume<Result>(SeqConsumer<V, Result> consumer)
+        public override Result Consume<Result>(Consumer<V, Result> consumer)
         {
             const int MaxLengthToAvoidPipelineCreationCost = 5;
 
@@ -59,14 +59,14 @@ namespace L2O2.Core
             }
         }
 
-        private static Result Consume_Empty<Result>(SeqConsumer<V, Result> consumer)
+        private static Result Consume_Empty<Result>(Consumer<V, Result> consumer)
         {
             try { consumer.ChainComplete(); }
             finally { consumer.ChainDispose(); }
             return consumer.Result;
         }
 
-        private TResult Consume_Owned<TResult>(ISeqTransform<T, V> transform, SeqConsumer<V, TResult> consumer)
+        private TResult Consume_Owned<TResult>(ITransmutation<T, V> transform, Consumer<V, TResult> consumer)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace L2O2.Core
             return consumer.Result;
         }
 
-        private TResult Consume_Pipeline<TResult>(ISeqTransform<T, V> transform, SeqConsumer<V, TResult> consumer)
+        private TResult Consume_Pipeline<TResult>(ITransmutation<T, V> transform, Consumer<V, TResult> consumer)
         {
             var activity = transform.Compose(consumer, consumer);
             try
@@ -108,10 +108,10 @@ namespace L2O2.Core
             return consumer.Result;
         }
 
-        public override Consumable<W> ReplaceTail<U_alias, W>(ISeqTransform<U_alias, W> selectImpl)
+        public override Consumable<W> ReplaceTail<U_alias, W>(ITransmutation<U_alias, W> selectImpl)
         {
             System.Diagnostics.Debug.Assert(typeof(U) == typeof(U_alias));
-            return new ArrayEnumerable<T, U, W>(array, first, (ISeqTransform<U,W>)selectImpl);
+            return new ConsumableArray<T, U, W>(array, first, (ITransmutation<U,W>)selectImpl);
         }
     }
 }

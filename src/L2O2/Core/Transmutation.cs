@@ -2,9 +2,9 @@
 
 namespace L2O2.Core
 {
-    abstract class SeqTransform<T, U> : ISeqTransform<T, U>
+    abstract class Transmutation<T, U> : ITransmutation<T, U>
     {
-        public abstract SeqConsumerActivity<T, V> Compose<V>(ISeqConsumer consumer, SeqConsumerActivity<U, V> activity);
+        public abstract ConsumerActivity<T, V> Compose<V>(IOutOfBand consumer, ConsumerActivity<U, V> activity);
 
         public virtual bool OwnedProcessNext(T t, out U u)
         {

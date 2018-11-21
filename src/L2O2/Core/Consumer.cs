@@ -2,13 +2,13 @@
 
 namespace L2O2.Core
 {
-    abstract class SeqConsumer<T, R>
-        : SeqConsumerActivity<T, T>
-        , ISeqConsumer
+    abstract class Consumer<T, R>
+        : ConsumerActivity<T, T>
+        , IOutOfBand
     {
         private Action listeners;
 
-        protected SeqConsumer(R initalResult)
+        protected Consumer(R initalResult)
         {
             Result = initalResult;
         }

@@ -6,7 +6,7 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        internal class WhereImpl<T> : ISeqTransform<T, T>
+        internal class WhereImpl<T> : ITransmutation<T, T>
         {
             internal readonly Func<T, bool> predicate;
 
@@ -15,7 +15,7 @@ namespace L2O2
                 this.predicate = predicate;
             }
 
-            public SeqConsumerActivity<T, U> Compose<U>(ISeqConsumer consumer, SeqConsumerActivity<T, U> activity)
+            public ConsumerActivity<T, U> Compose<U>(IOutOfBand consumer, ConsumerActivity<T, U> activity)
             {
                 return new Activity<U>(predicate, activity);
             }
@@ -39,12 +39,12 @@ namespace L2O2
                 return true;
             }
 
-            private class Activity<U> : SeqConsumerActivity<T, U>
+            private class Activity<U> : ConsumerActivity<T, U>
             {
                 private readonly Func<T, bool> selector;
-                private readonly SeqConsumerActivity<T, U> next;
+                private readonly ConsumerActivity<T, U> next;
 
-                public Activity(Func<T, bool> predicate, SeqConsumerActivity<T, U> next)
+                public Activity(Func<T, bool> predicate, ConsumerActivity<T, U> next)
                 {
                     this.selector = predicate;
                     this.next = next;

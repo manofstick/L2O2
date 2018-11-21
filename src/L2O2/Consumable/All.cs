@@ -6,7 +6,7 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        class AllImpl<T> : SeqConsumer<T, bool>
+        class AllImpl<T> : Consumer<T, bool>
         {
             private Func<T, bool> selector;
 

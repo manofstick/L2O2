@@ -5,23 +5,23 @@ using static L2O2.Consumable;
 
 namespace L2O2.Core
 {
-    internal class CompositionTransform<T, U, V> : ISeqTransform<T, V>
+    internal class CompositionTransform<T, U, V> : ITransmutation<T, V>
     {
-	    internal ISeqTransform<U, V> second;
-	    internal ISeqTransform<T, U> first;
+	    internal ITransmutation<U, V> second;
+	    internal ITransmutation<T, U> first;
 
-	    public CompositionTransform(ISeqTransform<T, U> first, ISeqTransform<U, V> second)
+	    public CompositionTransform(ITransmutation<T, U> first, ITransmutation<U, V> second)
 	    {
 		    this.first = first;
 		    this.second = second;
 	    }
 
-	    internal static ISeqTransform<T, V> Combine(ISeqTransform<T, U> first, ISeqTransform<U, V> second)
+	    internal static ITransmutation<T, V> Combine(ITransmutation<T, U> first, ITransmutation<U, V> second)
 	    {
             return new CompositionTransform<T, U, V>(first, second);
 	    }
 
-        public SeqConsumerActivity<T, W> Compose<W>(ISeqConsumer outOfBand, SeqConsumerActivity<V, W> next)
+        public ConsumerActivity<T, W> Compose<W>(IOutOfBand outOfBand, ConsumerActivity<V, W> next)
 	    {
 		    return first.Compose(outOfBand, second.Compose(outOfBand, next));
 	    }
