@@ -8,7 +8,7 @@ namespace L2O2.Core
     {
         protected ConsumableEnumerator() : base(default(T)) { }
 
-        internal virtual ConsumerActivity Activity { get; set; }
+        internal virtual Chain Activity { get; set; }
 
         public override bool ProcessNext(T input)
         {

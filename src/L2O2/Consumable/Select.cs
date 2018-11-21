@@ -41,15 +41,14 @@ namespace L2O2
                 return true;
             }
 
-            private class Activity<V> : ConsumerActivity<T, V>
+            private class Activity<V> : ConsumerActivity<T, U, V>
             {
                 private readonly Func<T, U> selector;
-                private readonly ConsumerActivity<U, V> next;
 
                 public Activity(Func<T, U> selector, ConsumerActivity<U, V> next)
+                    : base(next)
                 {
                     this.selector = selector;
-                    this.next = next;
                 }
 
                 public override bool ProcessNext(T input)

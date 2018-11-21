@@ -33,17 +33,16 @@ namespace L2O2
             public override bool OwnedProcessNext(T tin, out T tout) =>
                 predicate(tout = tin, index++);
 
-            private class Activity<V> : ConsumerActivity<T, V>
+            private class Activity<V> : ConsumerActivity<T, T, V>
             {
                 private readonly Func<T, int, bool> predicate;
-                private readonly ConsumerActivity<T, V> next;
 
                 private int index;
 
                 public Activity(Func<T, int, bool> predicate, ConsumerActivity<T, V> next)
+                    : base(next)
                 {
                     this.predicate = predicate;
-                    this.next = next;
                 }
 
                 public override bool ProcessNext(T input) =>

@@ -39,15 +39,14 @@ namespace L2O2
                 return true;
             }
 
-            private class Activity<U> : ConsumerActivity<T, U>
+            private class Activity<U> : ConsumerActivity<T, T, U>
             {
                 private readonly Func<T, bool> selector;
-                private readonly ConsumerActivity<T, U> next;
 
                 public Activity(Func<T, bool> predicate, ConsumerActivity<T, U> next)
+                    : base(next)
                 {
                     this.selector = predicate;
-                    this.next = next;
                 }
 
                 public override bool ProcessNext(T input)

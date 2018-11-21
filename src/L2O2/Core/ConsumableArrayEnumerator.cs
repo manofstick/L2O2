@@ -8,7 +8,7 @@ namespace L2O2.Core
         private int idx;
         private ConsumerActivity<T, TResult> activity = null;
 
-        internal override ConsumerActivity Activity => activity;
+        internal override Chain Activity => activity;
 
         private ConsumableArrayEnumerator(T[] array)
         {

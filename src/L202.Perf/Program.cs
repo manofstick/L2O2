@@ -40,7 +40,7 @@ namespace L202.Perf
                 Func<IEnumerable<int>, Func<int, bool>, IEnumerable<int>> __WHERE__,
                 Func<IEnumerable<int>, Func<int, int,bool>, IEnumerable<int>> __WHEREI__
             ) =
-#if false
+#if true
             (
                 "L2O2",
                 L2O2.Enumerable.Select,

@@ -8,7 +8,7 @@ namespace L2O2.Core
         private IEnumerator<T> enumerator;
         private ConsumerActivity<T, TResult> activity = null;
 
-        internal override ConsumerActivity Activity => activity;
+        internal override Chain Activity => activity;
 
         private ConsumableEnumerableEnumerator(IEnumerable<T> enumerable)
         {
