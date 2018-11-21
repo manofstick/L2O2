@@ -8,21 +8,21 @@ namespace L2O2
     {
         internal class WhereImpl<T> : ISeqTransform<T, T>
         {
-            internal readonly Func<T, bool> selector;
+            internal readonly Func<T, bool> predicate;
 
-            public WhereImpl(Func<T, bool> selector)
+            public WhereImpl(Func<T, bool> predicate)
             {
-                this.selector = selector;
+                this.predicate = predicate;
             }
 
             public SeqConsumerActivity<T, U> Compose<U>(ISeqConsumer consumer, SeqConsumerActivity<T, U> activity)
             {
-                return new Activity<U>(selector, activity);
+                return new Activity<U>(predicate, activity);
             }
 
             public bool OwnedProcessNext(T tin, out T tout)
             {
-                if (selector(tin))
+                if (predicate(tin))
                 {
                     tout = tin;
                     return true;
@@ -44,9 +44,9 @@ namespace L2O2
                 private readonly Func<T, bool> selector;
                 private readonly SeqConsumerActivity<T, U> next;
 
-                public Activity(Func<T, bool> selector, SeqConsumerActivity<T, U> next)
+                public Activity(Func<T, bool> predicate, SeqConsumerActivity<T, U> next)
                 {
-                    this.selector = selector;
+                    this.selector = predicate;
                     this.next = next;
                 }
 
@@ -92,12 +92,12 @@ namespace L2O2
 
         internal static Consumable<TSource> Where<TSource>(
             IEnumerable<TSource> source,
-            Func<TSource, bool> selector)
+            Func<TSource, bool> predicate)
         {
             if (source == null) throw new ArgumentNullException("source");
-            if (selector == null) throw new ArgumentNullException("selector");
+            if (predicate == null) throw new ArgumentNullException("selector");
 
-            return Utils.PushTransform(source, new WhereImpl<TSource>(selector));
+            return Utils.PushTransform(source, new WhereImpl<TSource>(predicate));
         }
     }
 }

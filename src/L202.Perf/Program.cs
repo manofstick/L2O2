@@ -30,20 +30,22 @@ namespace L202.Perf
         {
             //var library = Library.L2O2;
             var dataStructure = DataStructure.Array;
-            var function = Function.All;
+            var function = Function.Foreach;
             (
                 string __FUNCTIONS__,
                 Func<IEnumerable<int>, Func<int, int>, IEnumerable<int>> __SELECT__,
                 Func<IEnumerable<int>, Func<int, int, int>, IEnumerable<int>> __SELECTI__,
                 Func<IEnumerable<int>, Func<int, bool>, bool> __ALL__,
-                Func<IEnumerable<int>, Func<int, bool>, IEnumerable<int>> __WHERE__
+                Func<IEnumerable<int>, Func<int, bool>, IEnumerable<int>> __WHERE__,
+                Func<IEnumerable<int>, Func<int, int,bool>, IEnumerable<int>> __WHEREI__
             ) =
-#if falae
+#if false
             (
                 "L2O2",
                 L2O2.Enumerable.Select,
                 L2O2.Enumerable.Select,
                 L2O2.Enumerable.All,
+                L2O2.Enumerable.Where,
                 L2O2.Enumerable.Where
             );
 #else
@@ -52,6 +54,7 @@ namespace L202.Perf
                 System.Linq.Enumerable.Select,
                 System.Linq.Enumerable.Select,
                 System.Linq.Enumerable.All,
+                System.Linq.Enumerable.Where,
                 System.Linq.Enumerable.Where
             );
 #endif
@@ -86,6 +89,7 @@ namespace L202.Perf
                         var data = source;
 
                         data = __SELECT__(data, x => x + 1);
+                        data = __WHEREI__(data, (x,ii) => x + ii > 5);
                         //data = __WHERE__(data, x => x != 42);
                         //data = __SELECT__(data, x => x + 1);
                         //data = __SELECT__(data, x => x + 1);
