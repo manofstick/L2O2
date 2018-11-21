@@ -25,13 +25,11 @@ namespace L2O2.Core
 
         public override bool MoveNext()
         {
-            //SeqState = SeqProcessNextStates.InProcess;
             while (idx < list.Count && !Halted)
             {
                 if (activity.ProcessNext(list[idx++]))
                     return true;
             }
-            //SeqState = SeqProcessNextStates.Finished;
             activity.ChainComplete();
             return false;
         }

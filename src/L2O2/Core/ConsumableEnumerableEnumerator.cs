@@ -25,13 +25,12 @@ namespace L2O2.Core
 
         public override bool MoveNext()
         {
-            if (SeqState == SeqProcessNextStates.NotStarted)
+            if (enumerable != null)
             {
                 enumerator = enumerable.GetEnumerator();
                 enumerable = null;
             }
 
-            SeqState = SeqProcessNextStates.InProcess;
             while (enumerator.MoveNext())
             {
                 if (Halted)
@@ -40,7 +39,7 @@ namespace L2O2.Core
                 if (activity.ProcessNext(enumerator.Current))
                     return true;
             }
-            SeqState = SeqProcessNextStates.Finished;
+
             activity.ChainComplete();
             return false;
         }

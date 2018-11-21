@@ -8,8 +8,6 @@ namespace L2O2.Core
     {
         protected ConsumableEnumerator() : base(default(T)) { }
 
-        internal SeqProcessNextStates SeqState { get; set; } = SeqProcessNextStates.NotStarted;
-
         internal virtual ConsumerActivity Activity { get; set; }
 
         public override bool ProcessNext(T input)
