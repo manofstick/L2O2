@@ -2,8 +2,8 @@
 {
     abstract class Chain
     {
-        public virtual void ChainComplete() { }
-        public virtual void ChainDispose() { }
+        public abstract void ChainComplete();
+        public abstract void ChainDispose();
     }
 
     abstract class ConsumerActivity<T> : Chain

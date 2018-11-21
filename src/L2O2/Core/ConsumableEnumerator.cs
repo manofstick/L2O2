@@ -8,7 +8,7 @@ namespace L2O2.Core
     {
         protected ConsumableEnumerator() : base(default(T)) { }
 
-        internal virtual Chain Activity { get; set; }
+        internal virtual Chain StartOfChain { get; }
 
         public override bool ProcessNext(T input)
         {
@@ -18,7 +18,7 @@ namespace L2O2.Core
 
         public virtual T Current => Result;
         object IEnumerator.Current => Result;
-        public virtual void Dispose() => Activity.ChainDispose();
+        public virtual void Dispose() => StartOfChain.ChainDispose();
         public virtual void Reset() => throw new NotSupportedException();
 
         public abstract bool MoveNext();

@@ -16,8 +16,8 @@ namespace L2O2.Core
         public R Result { get; protected set; }
         public bool Halted { get; protected set; }
 
-        //public override void ChainComplete() {}
-        //public override void ChainDispose() {}
+        public override void ChainComplete() { }
+        public override void ChainDispose() { }
 
         public void ListenForStopFurtherProcessing(Action a)
         {
