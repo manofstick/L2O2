@@ -43,9 +43,7 @@ namespace L2O2.Core
         public override Result Consume<Result>(SeqConsumer<V, Result> consumer)
         {
             if (list.Count == 0)
-            {
                 return Consume_Empty(consumer);
-            }
             else
             {
                 const int MaxLengthToAvoidPipelineCreationCost = 5;
@@ -70,12 +68,13 @@ namespace L2O2.Core
         {
             try
             {
-                for (var i = 0; i < list.Count; ++i)
+                // don't use index of list to ensure list modifications throw exceptions
+                foreach(var t in list)
                 {
                     if (consumer.Halted)
                         break;
 
-                    if (transform.OwnedProcessNext(list[i], out var u))
+                    if (transform.OwnedProcessNext(t, out var u))
                         consumer.ProcessNext(u);
                 }
                 consumer.ChainComplete();
@@ -92,12 +91,13 @@ namespace L2O2.Core
             var activity = transform.Compose(consumer, consumer);
             try
             {
-                for (var i = 0; i < list.Count; ++i)
+                // don't use index of list to ensure list modifications throw exceptions
+                foreach (var t in list)
                 {
                     if (consumer.Halted)
                         break;
 
-                    activity.ProcessNext(list[i]);
+                    activity.ProcessNext(t);
                 }
                 activity.ChainComplete();
             }
