@@ -43,7 +43,9 @@ namespace L2O2.Core
         public override Result Consume<Result>(SeqConsumer<V, Result> consumer)
         {
             if (list.Count == 0)
-                return consumer.Result;
+            {
+                return Consume_Empty(consumer);
+            }
             else
             {
                 const int MaxLengthToAvoidPipelineCreationCost = 5;
@@ -55,6 +57,13 @@ namespace L2O2.Core
 
                 return Consume_Pipeline(transform, consumer);
             }
+        }
+
+        private static Result Consume_Empty<Result>(SeqConsumer<V, Result> consumer)
+        {
+            try { consumer.ChainComplete(); }
+            finally { consumer.ChainDispose(); }
+            return consumer.Result;
         }
 
         private TResult Consume_Owned<TResult>(ISeqTransform<T, V> transform, SeqConsumer<V, TResult> consumer)
