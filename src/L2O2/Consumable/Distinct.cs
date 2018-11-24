@@ -13,21 +13,21 @@ namespace L2O2
             public DistinctImpl(IEqualityComparer<T> comparer) =>
                 this.comparer = comparer;
 
-            public override ConsumerActivity<T, V> Compose<V>(IOutOfBand consumer, ConsumerActivity<T, V> activity) =>
-                new Activity<V>(comparer, activity);
+            public override ConsumerActivity<T, V, Result> Compose<V, Result>(IOutOfBand consumer, ConsumerActivity<T, V, Result> activity) =>
+                new Activity<V, Result>(comparer, activity);
 
-            private class Activity<V> : ConsumerActivity<T, T, V>
+            private class Activity<V, Result> : ConsumerActivity<T, T, V, Result>
             {
                 private readonly HashSet<T> seen;
 
-                public Activity(IEqualityComparer<T> comparer, ConsumerActivity<T, V> next)
+                public Activity(IEqualityComparer<T> comparer, ConsumerActivity<T, V, Result> next)
                     : base(next)
                 {
                     this.seen = new HashSet<T>(comparer);
                 }
 
-                public override bool ProcessNext(T input) =>
-                    seen.Add(input) && next.ProcessNext(input);
+                public override bool ProcessNext(T input, ref Result result) =>
+                    seen.Add(input) && next.ProcessNext(input, ref result);
             }
         }
 

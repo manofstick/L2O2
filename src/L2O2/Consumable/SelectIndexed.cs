@@ -19,9 +19,9 @@ namespace L2O2
                 this.selector = selector;
             }
 
-            public override ConsumerActivity<T, V> Compose<V>(IOutOfBand consumer, ConsumerActivity<U, V> activity)
+            public override ConsumerActivity<T, V, Result> Compose<V, Result>(IOutOfBand consumer, ConsumerActivity<U, V, Result> activity)
             {
-                return new Activity<V>(selector, activity);
+                return new Activity<V, Result>(selector, activity);
             }
 
             public override bool TryOwn()
@@ -40,21 +40,21 @@ namespace L2O2
                 return true;
             }
 
-            private class Activity<V> : ConsumerActivity<T, U, V>
+            private class Activity<V, Result> : ConsumerActivity<T, U, V, Result>
             {
                 private readonly Func<T, int, U> selector;
 
                 private int index;
 
-                public Activity(Func<T, int, U> selector, ConsumerActivity<U, V> next)
+                public Activity(Func<T, int, U> selector, ConsumerActivity<U, V, Result> next)
                     : base(next)
                 {
                     this.selector = selector;
                 }
 
-                public override bool ProcessNext(T input)
+                public override bool ProcessNext(T input, ref Result result)
                 {
-                    return next.ProcessNext(selector(input, index++));
+                    return next.ProcessNext(selector(input, index++), ref result);
                 }
             }
         }

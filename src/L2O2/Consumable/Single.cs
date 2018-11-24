@@ -16,23 +16,23 @@ namespace L2O2
                 found = false;
             }
 
-            public override bool ProcessNext(T input)
+            public override bool ProcessNext(T input, ref T result)
             {
                 if (found)
                     throw new InvalidOperationException("Sequence contained multiple elements");
 
                 found = true;
-                Result = input;
+                result = input;
 
                 return true; /*ignored*/
             }
 
-            public override void ChainComplete()
+            public override void ChainComplete(ref T result)
             {
                 if (!found)
                     throw new InvalidOperationException("Sequence was empty");
 
-                base.ChainComplete();
+                base.ChainComplete(ref result);
             }
         }
 

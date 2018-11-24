@@ -31,7 +31,7 @@ namespace L202.Perf
         {
             //var library = Library.L2O2;
             var dataStructure = DataStructure.Array;
-            var function = Function.Foreach;
+            var function = Function.All;
             (
                 string __FUNCTIONS__,
                 Func<IEnumerable<int>, Func<int, int>, IEnumerable<int>> __SELECT__,
@@ -41,7 +41,7 @@ namespace L202.Perf
                 Func<IEnumerable<int>, Func<int, int, bool>, IEnumerable<int>> __WHEREI__,
                 Func<IEnumerable<int>, IEnumerable<int>> __DISTINCT__
             ) =
-#if false
+#if true
             (
                 "L2O2",
                 L2O2.Enumerable.Select,
@@ -95,7 +95,7 @@ namespace L202.Perf
                         var data = source;
 
                         data = __SELECT__(data, x => x % 1000);
-                        data = __WHEREI__(data, (x,ii) => x + ii > 5);
+                        data = __WHEREI__(data, (x, ii) => x + ii > 5);
                         data = __DISTINCT__(data);
                         //data = __WHERE__(data, x => x != 42);
                         //data = __SELECT__(data, x => x + 1);

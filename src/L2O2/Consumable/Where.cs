@@ -15,9 +15,9 @@ namespace L2O2
                 this.predicate = predicate;
             }
 
-            public ConsumerActivity<T, U> Compose<U>(IOutOfBand consumer, ConsumerActivity<T, U> activity)
+            public ConsumerActivity<T, U, Result> Compose<U, Result>(IOutOfBand consumer, ConsumerActivity<T, U, Result> activity)
             {
-                return new Activity<U>(predicate, activity);
+                return new Activity<U, Result>(predicate, activity);
             }
 
             public bool OwnedProcessNext(T tin, out T tout)
@@ -39,19 +39,19 @@ namespace L2O2
                 return true;
             }
 
-            private class Activity<U> : ConsumerActivity<T, T, U>
+            private class Activity<U, Result> : ConsumerActivity<T, T, U, Result>
             {
                 private readonly Func<T, bool> selector;
 
-                public Activity(Func<T, bool> predicate, ConsumerActivity<T, U> next)
+                public Activity(Func<T, bool> predicate, ConsumerActivity<T, U, Result> next)
                     : base(next)
                 {
                     this.selector = predicate;
                 }
 
-                public override bool ProcessNext(T input)
+                public override bool ProcessNext(T input, ref Result result)
                 {
-                    return selector(input) && next.ProcessNext(input);
+                    return selector(input) && next.ProcessNext(input, ref result);
                 }
             }
         }

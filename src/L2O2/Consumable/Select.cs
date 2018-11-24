@@ -25,9 +25,9 @@ namespace L2O2
                 return consumer.ReplaceTail(new SelectImpl<T, U, V>(Selector, u2v));
             }
 
-            public ConsumerActivity<T, V> Compose<V>(IOutOfBand consumer, ConsumerActivity<U, V> activity)
+            public ConsumerActivity<T, V, Result> Compose<V, Result>(IOutOfBand consumer, ConsumerActivity<U, V, Result> activity)
             {
-                return new Activity<V>(Selector, activity);
+                return new Activity<V, Result>(Selector, activity);
             }
 
             public bool OwnedProcessNext(T t, out U u)
@@ -41,19 +41,19 @@ namespace L2O2
                 return true;
             }
 
-            private class Activity<V> : ConsumerActivity<T, U, V>
+            private class Activity<V, Result> : ConsumerActivity<T, U, V, Result>
             {
                 private readonly Func<T, U> selector;
 
-                public Activity(Func<T, U> selector, ConsumerActivity<U, V> next)
+                public Activity(Func<T, U> selector, ConsumerActivity<U, V, Result> next)
                     : base(next)
                 {
                     this.selector = selector;
                 }
 
-                public override bool ProcessNext(T input)
+                public override bool ProcessNext(T input, ref Result result)
                 {
-                    return next.ProcessNext(selector(input));
+                    return next.ProcessNext(selector(input), ref result);
                 }
             }
         }

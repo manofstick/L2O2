@@ -8,7 +8,7 @@ namespace L2O2.Core
         private IEnumerator<T> enumerator;
         private ConsumerActivity<T, TResult> activity = null;
 
-        internal override Chain StartOfChain => activity;
+        internal override Chain<TResult> StartOfChain => activity;
 
         private ConsumableEnumerableEnumerator(IEnumerable<T> enumerable)
         {
@@ -45,11 +45,11 @@ namespace L2O2.Core
         tryAgain:
             if (!enumerator.MoveNext() || Halted)
             {
-                activity.ChainComplete();
+                activity.ChainComplete(ref result);
                 return false;
             }
 
-            if (!activity.ProcessNext(enumerator.Current))
+            if (!activity.ProcessNext(enumerator.Current, ref result))
                 goto tryAgain;
 
             return true;

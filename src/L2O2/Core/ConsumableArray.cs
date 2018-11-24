@@ -61,13 +61,15 @@ namespace L2O2.Core
 
         private static Result Consume_Empty<Result>(Consumer<V, Result> consumer)
         {
-            try { consumer.ChainComplete(); }
+            var result = consumer.InitialResult;
+            try { consumer.ChainComplete(ref result); }
             finally { consumer.ChainDispose(); }
-            return consumer.Result;
+            return result;
         }
 
         private TResult Consume_Owned<TResult>(ITransmutation<T, V> transform, Consumer<V, TResult> consumer)
         {
+            var result = consumer.InitialResult;
             try
             {
                 for (var i = 0; i < array.Length; ++i)
@@ -76,19 +78,20 @@ namespace L2O2.Core
                         break;
 
                     if (transform.OwnedProcessNext(array[i], out var u))
-                        consumer.ProcessNext(u);
+                        consumer.ProcessNext(u, ref result);
                 }
-                consumer.ChainComplete();
+                consumer.ChainComplete(ref result);
             }
             finally
             {
                 consumer.ChainDispose();
             }
-            return consumer.Result;
+            return result;
         }
 
         private TResult Consume_Pipeline<TResult>(ITransmutation<T, V> transform, Consumer<V, TResult> consumer)
         {
+            var result = consumer.InitialResult;
             var activity = transform.Compose(consumer, consumer);
             try
             {
@@ -97,15 +100,15 @@ namespace L2O2.Core
                     if (consumer.Halted)
                         break;
 
-                    activity.ProcessNext(array[i]);
+                    activity.ProcessNext(array[i], ref result);
                 }
-                activity.ChainComplete();
+                activity.ChainComplete(ref result);
             }
             finally
             {
                 activity.ChainDispose();
             }
-            return consumer.Result;
+            return result;
         }
 
         public override Consumable<W> ReplaceTail<U_alias, W>(ITransmutation<U_alias, W> selectImpl)

@@ -9,7 +9,7 @@ namespace L2O2.Core
 
         private ConsumerActivity<T, TResult> activity = null;
 
-        internal override Chain StartOfChain => activity;
+        internal override Chain<TResult> StartOfChain => activity;
 
         private ConsumableListEnumerator(List<T> list)
         {
@@ -42,11 +42,11 @@ namespace L2O2.Core
         tryAgain:
             if (!enumerator.MoveNext() || Halted)
             {
-                activity.ChainComplete();
+                activity.ChainComplete(ref result);
                 return false;
             }
 
-            if (!activity.ProcessNext(enumerator.Current))
+            if (!activity.ProcessNext(enumerator.Current, ref result))
                 goto tryAgain;
 
             return true;

@@ -8,16 +8,18 @@ namespace L2O2.Core
     {
         protected ConsumableEnumerator() : base(default(T)) { }
 
-        internal virtual Chain StartOfChain { get; }
+        internal virtual Chain<T> StartOfChain { get; }
 
-        public override bool ProcessNext(T input)
+        protected T result;
+
+        public override bool ProcessNext(T input, ref T result)
         {
-            Result = input;
+            result = input;
             return true;
         }
 
-        public virtual T Current => Result;
-        object IEnumerator.Current => Result;
+        public virtual T Current => result;
+        object IEnumerator.Current => result;
         public virtual void Dispose() => StartOfChain.ChainDispose();
         public virtual void Reset() => throw new NotSupportedException();
 

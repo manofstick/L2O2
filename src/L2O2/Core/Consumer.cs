@@ -3,20 +3,21 @@
 namespace L2O2.Core
 {
     abstract class Consumer<T, R>
-        : ConsumerActivity<T, T>
+        : ConsumerActivity<T, T, R>
         , IOutOfBand
     {
         private Action listeners;
 
         protected Consumer(R initalResult)
         {
-            Result = initalResult;
+            InitialResult = initalResult;
         }
 
-        public R Result { get; protected set; }
+        public R InitialResult { get; }
+
         public bool Halted { get; protected set; }
 
-        public override void ChainComplete() { }
+        public override void ChainComplete(ref R result) { }
         public override void ChainDispose() { }
 
         public void ListenForStopFurtherProcessing(Action a)

@@ -8,7 +8,7 @@ namespace L2O2.Core
         private int idx;
         private ConsumerActivity<T, TResult> activity = null;
 
-        internal override Chain StartOfChain => activity;
+        internal override Chain<TResult> StartOfChain => activity;
 
         private ConsumableArrayEnumerator(T[] array)
         {
@@ -34,11 +34,11 @@ namespace L2O2.Core
         tryAgain:
             if (idx >= array.Length || Halted)
             {
-                activity.ChainComplete();
+                activity.ChainComplete(ref result);
                 return false;
             }
 
-            if (!activity.ProcessNext(array[idx++]))
+            if (!activity.ProcessNext(array[idx++], ref result))
                 goto tryAgain;
 
             return true;

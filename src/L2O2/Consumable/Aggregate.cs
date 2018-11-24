@@ -19,27 +19,27 @@ namespace L2O2
                 this.func = func;
             }
 
-            public override bool ProcessNext(T input)
+            public override bool ProcessNext(T input, ref T result)
             {
                 if (first)
                 {
                     first = false;
-                    Result = input;
+                    result = input;
                 }
                 else
                 {
-                    Result = func(Result, input);
+                    result = func(result, input);
                 }
 
                 return true; /*ignored*/
             }
 
-            public override void ChainComplete()
+            public override void ChainComplete(ref T result)
             {
                 if (first)
                     throw new InvalidOperationException();
 
-                base.ChainComplete();
+                base.ChainComplete(ref result);
             }
         }
 
@@ -58,18 +58,18 @@ namespace L2O2
                 this.resultSelector = resultSelector;
             }
 
-            public override bool ProcessNext(T input)
+            public override bool ProcessNext(T input, ref TResult result)
             {
                 this.accumulate = func(accumulate, input);
 
                 return true; /*ignored*/
             }
 
-            public override void ChainComplete()
+            public override void ChainComplete(ref TResult result)
             {
-                Result = resultSelector(accumulate);
+                result = resultSelector(accumulate);
 
-                base.ChainComplete();
+                base.ChainComplete(ref result);
             }
         }
 

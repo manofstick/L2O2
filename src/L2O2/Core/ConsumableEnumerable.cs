@@ -39,7 +39,8 @@ namespace L2O2.Core
 
         public override TResult Consume<TResult>(Consumer<V, TResult> consumer)
         {
-            var transform = (ITransmutation<T, V>)this;
+            var result = consumer.InitialResult;
+            var transform = GetTransform();
             var activity = transform.Compose(consumer, consumer);
             try
             {
@@ -48,15 +49,15 @@ namespace L2O2.Core
                     if (consumer.Halted)
                         break;
 
-                    activity.ProcessNext(item);
+                    activity.ProcessNext(item, ref result);
                 }
-                activity.ChainComplete();
+                activity.ChainComplete(ref result);
             }
             finally
             {
                 activity.ChainDispose();
             }
-            return consumer.Result;
+            return result;
         }
 
         public override Consumable<W> ReplaceTail<U_alias, W>(ITransmutation<U_alias, W> selectImpl)
