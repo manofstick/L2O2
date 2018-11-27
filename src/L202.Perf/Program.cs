@@ -30,7 +30,7 @@ namespace L202.Perf
         static void Main(string[] args)
         {
             //var library = Library.L2O2;
-            var dataStructure = DataStructure.Array;
+            var dataStructure = DataStructure.Enumerable;
             var function = Function.Foreach;
             (
                 string __FUNCTIONS__,
@@ -95,7 +95,7 @@ namespace L202.Perf
                         var data = source;
 
                         data = __SELECT__(data, x => x % 1000);
-                        data = __WHEREI__(data, (x, ii) => x + ii > 5);
+                        //data = __WHEREI__(data, (x, ii) => x + ii > 5);
                         //data = __DISTINCT__(data);
                         //data = __WHERE__(data, x => x != 42);
                         //data = __SELECT__(data, x => x + 1);

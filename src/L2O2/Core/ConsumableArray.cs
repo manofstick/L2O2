@@ -97,10 +97,10 @@ namespace L2O2.Core
             {
                 for (var i = 0; i < array.Length; ++i)
                 {
+                    activity.ProcessNext(array[i], ref result);
+
                     if (result.Halted)
                         break;
-
-                    activity.ProcessNext(array[i], ref result);
                 }
                 activity.ChainComplete(ref result.Value);
             }

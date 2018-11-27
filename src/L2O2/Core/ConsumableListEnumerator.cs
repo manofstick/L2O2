@@ -9,7 +9,7 @@ namespace L2O2.Core
 
         private ConsumerActivity<T, TResult> activity = null;
 
-        internal override Chain<TResult> StartOfChain => activity;
+        protected override Chain<TResult> StartOfChain => activity;
 
         private ConsumableListEnumerator(List<T> list)
         {
