@@ -19,16 +19,16 @@ namespace L2O2
                 this.func = func;
             }
 
-            public override bool ProcessNext(T input, ref T result)
+            public override bool ProcessNext(T input, ref Status<T> result)
             {
                 if (first)
                 {
                     first = false;
-                    result = input;
+                    result.Value = input;
                 }
                 else
                 {
-                    result = func(result, input);
+                    result.Value = func(result.Value, input);
                 }
 
                 return true; /*ignored*/
@@ -58,7 +58,7 @@ namespace L2O2
                 this.resultSelector = resultSelector;
             }
 
-            public override bool ProcessNext(T input, ref TResult result)
+            public override bool ProcessNext(T input, ref Status<TResult> result)
             {
                 this.accumulate = func(accumulate, input);
 

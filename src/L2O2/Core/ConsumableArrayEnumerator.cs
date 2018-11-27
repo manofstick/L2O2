@@ -25,16 +25,16 @@ namespace L2O2.Core
         internal static IEnumerator<TResult> Create(T[] array, ITransmutation<T, TResult> factory)
         {
             var arrayEnumerator = new ConsumableArrayEnumerator<T, TResult>(array);
-            arrayEnumerator.activity = factory.Compose(arrayEnumerator, arrayEnumerator);
+            arrayEnumerator.activity = factory.Compose(arrayEnumerator);
             return arrayEnumerator;
         }
 
         public override bool MoveNext()
         {
         tryAgain:
-            if (idx >= array.Length || Halted)
+            if (idx >= array.Length || result.Halted)
             {
-                activity.ChainComplete(ref result);
+                activity.ChainComplete(ref result.Value);
                 return false;
             }
 

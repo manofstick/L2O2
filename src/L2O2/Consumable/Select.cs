@@ -25,7 +25,7 @@ namespace L2O2
                 return consumer.ReplaceTail(new SelectImpl<T, U, V>(Selector, u2v));
             }
 
-            public ConsumerActivity<T, V, Result> Compose<V, Result>(IOutOfBand consumer, ConsumerActivity<U, V, Result> activity)
+            public ConsumerActivity<T, V, Result> Compose<V, Result>(ConsumerActivity<U, V, Result> activity)
             {
                 return new Activity<V, Result>(Selector, activity);
             }
@@ -51,7 +51,7 @@ namespace L2O2
                     this.selector = selector;
                 }
 
-                public override bool ProcessNext(T input, ref Result result)
+                public override bool ProcessNext(T input, ref Status<Result> result)
                 {
                     return next.ProcessNext(selector(input), ref result);
                 }

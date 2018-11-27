@@ -13,7 +13,7 @@ namespace L2O2
             public DistinctImpl(IEqualityComparer<T> comparer) =>
                 this.comparer = comparer;
 
-            public override ConsumerActivity<T, V, Result> Compose<V, Result>(IOutOfBand consumer, ConsumerActivity<T, V, Result> activity) =>
+            public override ConsumerActivity<T, V, Result> Compose<V, Result>(ConsumerActivity<T, V, Result> activity) =>
                 new Activity<V, Result>(comparer, activity);
 
             private class Activity<V, Result> : ConsumerActivity<T, T, V, Result>
@@ -26,7 +26,7 @@ namespace L2O2
                     this.seen = new HashSet<T>(comparer);
                 }
 
-                public override bool ProcessNext(T input, ref Result result) =>
+                public override bool ProcessNext(T input, ref Status<Result> result) =>
                     seen.Add(input) && next.ProcessNext(input, ref result);
             }
         }

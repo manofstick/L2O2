@@ -18,7 +18,7 @@ namespace L2O2
                 found = false;
             }
 
-            public override bool ProcessNext(T input, ref T result)
+            public override bool ProcessNext(T input, ref Status<T> result)
             {
                 if (predicate(input))
                 {
@@ -26,7 +26,7 @@ namespace L2O2
                         throw new InvalidOperationException("Sequence contained multiple elements");
 
                     found = true;
-                    result = input;
+                    result.Value = input;
                 }
 
                 return true; /*ignored*/

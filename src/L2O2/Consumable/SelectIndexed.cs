@@ -19,7 +19,7 @@ namespace L2O2
                 this.selector = selector;
             }
 
-            public override ConsumerActivity<T, V, Result> Compose<V, Result>(IOutOfBand consumer, ConsumerActivity<U, V, Result> activity)
+            public override ConsumerActivity<T, V, Result> Compose<V, Result>(ConsumerActivity<U, V, Result> activity)
             {
                 return new Activity<V, Result>(selector, activity);
             }
@@ -52,7 +52,7 @@ namespace L2O2
                     this.selector = selector;
                 }
 
-                public override bool ProcessNext(T input, ref Result result)
+                public override bool ProcessNext(T input, ref Status<Result> result)
                 {
                     return next.ProcessNext(selector(input, index++), ref result);
                 }

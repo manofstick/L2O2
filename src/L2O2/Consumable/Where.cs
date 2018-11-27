@@ -15,7 +15,7 @@ namespace L2O2
                 this.predicate = predicate;
             }
 
-            public ConsumerActivity<T, U, Result> Compose<U, Result>(IOutOfBand consumer, ConsumerActivity<T, U, Result> activity)
+            public ConsumerActivity<T, U, Result> Compose<U, Result>(ConsumerActivity<T, U, Result> activity)
             {
                 return new Activity<U, Result>(predicate, activity);
             }
@@ -49,7 +49,7 @@ namespace L2O2
                     this.selector = predicate;
                 }
 
-                public override bool ProcessNext(T input, ref Result result)
+                public override bool ProcessNext(T input, ref Status<Result> result)
                 {
                     return selector(input) && next.ProcessNext(input, ref result);
                 }

@@ -6,9 +6,15 @@
         public abstract void ChainDispose();
     }
 
+    struct Status<T>
+    {
+        public bool Halted;
+        public T Value;
+    }
+
     abstract class ConsumerActivity<T, Result> : Chain<Result>
     {
-        public abstract bool ProcessNext(T input, ref Result result);
+        public abstract bool ProcessNext(T input, ref Status<Result> result);
     }
 
     abstract class ConsumerActivity<T, U, Result> : ConsumerActivity<T, Result>

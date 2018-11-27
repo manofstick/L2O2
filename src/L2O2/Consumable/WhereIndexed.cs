@@ -17,7 +17,7 @@ namespace L2O2
             public WhereIndexedImpl(Func<T, int, bool> predicate) =>
                 this.predicate = predicate;
 
-            public override ConsumerActivity<T, V, Result> Compose<V, Result>(IOutOfBand consumer, ConsumerActivity<T, V, Result> activity) =>
+            public override ConsumerActivity<T, V, Result> Compose<V, Result>(ConsumerActivity<T, V, Result> activity) =>
                 new Activity<V, Result>(predicate, activity);
 
             public override bool TryOwn()
@@ -45,7 +45,7 @@ namespace L2O2
                     this.predicate = predicate;
                 }
 
-                public override bool ProcessNext(T input, ref Result result) =>
+                public override bool ProcessNext(T input, ref Status<Result> result) =>
                     predicate(input, index++) && next.ProcessNext(input, ref result);
             }
         }

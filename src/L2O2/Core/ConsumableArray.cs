@@ -69,46 +69,46 @@ namespace L2O2.Core
 
         private TResult Consume_Owned<TResult>(ITransmutation<T, V> transform, Consumer<V, TResult> consumer)
         {
-            var result = consumer.InitialResult;
+            var result = new Status<TResult> { Value = consumer.InitialResult };
             try
             {
                 for (var i = 0; i < array.Length; ++i)
                 {
-                    if (consumer.Halted)
-                        break;
-
                     if (transform.OwnedProcessNext(array[i], out var u))
                         consumer.ProcessNext(u, ref result);
+
+                    if (result.Halted)
+                        break;
                 }
-                consumer.ChainComplete(ref result);
+                consumer.ChainComplete(ref result.Value);
             }
             finally
             {
                 consumer.ChainDispose();
             }
-            return result;
+            return result.Value;
         }
 
         private TResult Consume_Pipeline<TResult>(ITransmutation<T, V> transform, Consumer<V, TResult> consumer)
         {
-            var result = consumer.InitialResult;
-            var activity = transform.Compose(consumer, consumer);
+            var result = new Status<TResult> { Value = consumer.InitialResult };
+            var activity = transform.Compose(consumer);
             try
             {
                 for (var i = 0; i < array.Length; ++i)
                 {
-                    if (consumer.Halted)
+                    if (result.Halted)
                         break;
 
                     activity.ProcessNext(array[i], ref result);
                 }
-                activity.ChainComplete(ref result);
+                activity.ChainComplete(ref result.Value);
             }
             finally
             {
                 activity.ChainDispose();
             }
-            return result;
+            return result.Value;
         }
 
         public override Consumable<W> ReplaceTail<U_alias, W>(ITransmutation<U_alias, W> selectImpl)

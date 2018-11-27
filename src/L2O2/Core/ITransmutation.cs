@@ -7,6 +7,6 @@
         bool TryOwn();
         bool OwnedProcessNext(T t, out U u);
 
-        ConsumerActivity<T, V, Result> Compose<V, Result>(IOutOfBand consumer, ConsumerActivity<U,V, Result> activity);
+        ConsumerActivity<T, V, Result> Compose<V, Result>(ConsumerActivity<U,V, Result> activity);
     }
 }

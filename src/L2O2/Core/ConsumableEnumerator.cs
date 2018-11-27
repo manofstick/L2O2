@@ -10,16 +10,16 @@ namespace L2O2.Core
 
         internal virtual Chain<T> StartOfChain { get; }
 
-        protected T result;
+        protected Status<T> result;
 
-        public override bool ProcessNext(T input, ref T result)
+        public override bool ProcessNext(T input, ref Status<T> result)
         {
-            result = input;
+            result.Value = input;
             return true;
         }
 
-        public virtual T Current => result;
-        object IEnumerator.Current => result;
+        public virtual T Current => result.Value;
+        object IEnumerator.Current => result.Value;
         public virtual void Dispose() => StartOfChain.ChainDispose();
         public virtual void Reset() => throw new NotSupportedException();
 
