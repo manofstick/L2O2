@@ -6,7 +6,7 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        internal class SelectIndexedImpl<T, U> : Transmutation<T, U>
+        sealed class SelectIndexedImpl<T, U> : Transmutation<T, U>
         {
             private readonly int initialThreadId = Environment.CurrentManagedThreadId;
             private bool owned = false;
@@ -40,7 +40,7 @@ namespace L2O2
                 return ProcessNextResult.OK;
             }
 
-            private class Activity<V> : Activity<T, U, V>
+            sealed class Activity<V> : Activity<T, U, V>
             {
                 private readonly Func<T, int, U> selector;
 

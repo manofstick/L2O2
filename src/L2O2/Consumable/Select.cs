@@ -41,7 +41,7 @@ namespace L2O2
                 return true;
             }
 
-            private class Activity<V> : Activity<T, U, V>
+            sealed class Activity<V> : Activity<T, U, V>
             {
                 private readonly Func<T, U> selector;
 
@@ -56,7 +56,7 @@ namespace L2O2
             }
         }
 
-        internal class SelectImpl<T, U, V> : SelectImpl<T, V>
+        sealed class SelectImpl<T, U, V> : SelectImpl<T, V>
         {
             private readonly Func<T, U> t2u;
             private readonly Func<U, V> u2v;
@@ -74,7 +74,7 @@ namespace L2O2
             }
         }
 
-        internal class SelectImpl<T, U, V, W> : SelectImpl<T, W>
+        sealed class SelectImpl<T, U, V, W> : SelectImpl<T, W>
         {
             private readonly Func<T, U> t2u;
             private readonly Func<U, V> u2v;
@@ -94,7 +94,7 @@ namespace L2O2
             }
         }
 
-        internal class SelectImpl<T, U, V, W, X> : SelectImpl<T, X>
+        sealed class SelectImpl<T, U, V, W, X> : SelectImpl<T, X>
         {
             public SelectImpl(Func<T, U> t2u, Func<U, V> u2v, Func<V, W> v2w, Func<W,X> w2x)
                 : base(t => w2x(v2w(u2v(t2u(t)))))

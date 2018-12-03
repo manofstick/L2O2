@@ -6,7 +6,7 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        class SinglePredicateImpl<T> : Consumer<T, T>
+        sealed class SinglePredicateImpl<T> : Consumer<T, T>
         {
             private readonly Func<T, bool> predicate;
             private bool found;

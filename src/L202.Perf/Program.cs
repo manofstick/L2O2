@@ -31,7 +31,7 @@ namespace L202.Perf
         {
             //var library = Library.L2O2;
             var dataStructure = DataStructure.Array;
-            var function = Function.Foreach;
+            var function = Function.All;
             (
                 string __FUNCTIONS__,
                 Func<IEnumerable<int>, Func<int, int>, IEnumerable<int>> __SELECT__,

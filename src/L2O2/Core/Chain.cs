@@ -8,25 +8,6 @@ namespace L2O2.Core
         public abstract void ChainDispose();
     }
 
-    [Flags]
-    enum ProcessNextResult
-    {
-        OK             = 0x00,
-        Filtered       = 0x02,
-        Halted         = 0x80,
-        HaltedActivity = 0x81,
-        HaltedConsumer = 0x82,
-    }
-
-    static class ProcessNextResultHelper
-    {
-        public static bool IsHalted(this ProcessNextResult result) =>
-            (result & ProcessNextResult.Halted) == ProcessNextResult.Halted;
-
-        public static bool IsOK(this ProcessNextResult result) =>
-            result == ProcessNextResult.OK;
-    }
-
     abstract class Chain<T> : Chain
     {
         public abstract ProcessNextResult ProcessNext(T input);
@@ -51,8 +32,7 @@ namespace L2O2.Core
 
     sealed class ChainEnd { private ChainEnd() { } }
 
-    abstract class Consumer<T, R>
-        : Chain<T, ChainEnd>
+    abstract class Consumer<T, R> : Chain<T, ChainEnd>
     {
         protected Consumer(R initalResult)
         {

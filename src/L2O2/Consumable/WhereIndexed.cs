@@ -6,7 +6,7 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        internal class WhereIndexedImpl<T> : Transmutation<T, T>
+        sealed class WhereIndexedImpl<T> : Transmutation<T, T>
         {
             private readonly int initialThreadId = Environment.CurrentManagedThreadId;
             private bool owned = false;
@@ -33,7 +33,7 @@ namespace L2O2
             public override ProcessNextResult OwnedProcessNext(T tin, out T tout) =>
                 predicate(tout = tin, index++) ? ProcessNextResult.OK : ProcessNextResult.Filtered;
 
-            private class Activity<V> : Activity<T, T, V>
+            sealed class Activity<V> : Activity<T, T, V>
             {
                 private readonly Func<T, int, bool> predicate;
 

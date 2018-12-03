@@ -6,7 +6,7 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        class ReduceImpl<T> : Consumer<T, T>
+        sealed class ReduceImpl<T> : Consumer<T, T>
         {
             private readonly Func<T, T, T> func;
 
@@ -43,7 +43,7 @@ namespace L2O2
             }
         }
 
-        class AggregateImpl<T, TAccumulate, TResult> : Consumer<T, TResult>
+        sealed class AggregateImpl<T, TAccumulate, TResult> : Consumer<T, TResult>
         {
             private readonly Func<TAccumulate, T, TAccumulate> func;
             private readonly Func<TAccumulate, TResult> resultSelector;

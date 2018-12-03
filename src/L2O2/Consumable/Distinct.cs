@@ -6,7 +6,7 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        internal class DistinctImpl<T> : Transmutation<T, T>
+        sealed class DistinctImpl<T> : Transmutation<T, T>
         {
             private readonly IEqualityComparer<T> comparer;
 
@@ -16,7 +16,7 @@ namespace L2O2
             public override Chain<T, V> Compose<V>(Chain<T, V> activity) =>
                 new Activity<V>(comparer, activity);
 
-            private class Activity<V> : Activity<T, T, V>
+            sealed class Activity<V> : Activity<T, T, V>
             {
                 private readonly HashSet<T> seen;
 

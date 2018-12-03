@@ -6,7 +6,7 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        class SingleImpl<T> : Consumer<T, T>
+        sealed class SingleImpl<T> : Consumer<T, T>
         {
             private bool found;
 

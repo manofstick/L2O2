@@ -6,7 +6,7 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        internal class WhereImpl<T> : ITransmutation<T, T>
+        sealed class WhereImpl<T> : ITransmutation<T, T>
         {
             internal readonly Func<T, bool> predicate;
 
@@ -39,7 +39,7 @@ namespace L2O2
                 return true;
             }
 
-            private class Activity<U> : Activity<T, T, U>
+            sealed class Activity<U> : Activity<T, T, U>
             {
                 private readonly Func<T, bool> selector;
 
