@@ -6,7 +6,7 @@ namespace L2O2.Core
     {
         private T[] array;
         private int idx;
-        private ConsumerActivity<T, TResult> activity = null;
+        private Chain<T, ChainEnd> activity = null;
 
         internal override Chain StartOfChain => activity;
 

@@ -21,7 +21,7 @@ namespace L2O2.Core
             return new CompositionTransform<T, U, V>(first, second);
 	    }
 
-        public ConsumerActivity<T, W> Compose<W>(ConsumerActivity<V, W> next)
+        public Chain<T, W> Compose<W>(Chain<V, W> next)
 	    {
 		    return first.Compose(second.Compose(next));
 	    }

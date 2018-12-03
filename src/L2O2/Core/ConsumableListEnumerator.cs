@@ -7,7 +7,7 @@ namespace L2O2.Core
         private List<T> list;
         List<T>.Enumerator enumerator;
 
-        private ConsumerActivity<T, TResult> activity = null;
+        private Chain<T, ChainEnd> activity = null;
 
         internal override Chain StartOfChain => activity;
 

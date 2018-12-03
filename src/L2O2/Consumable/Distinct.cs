@@ -13,14 +13,14 @@ namespace L2O2
             public DistinctImpl(IEqualityComparer<T> comparer) =>
                 this.comparer = comparer;
 
-            public override ConsumerActivity<T, V> Compose<V>(ConsumerActivity<T, V> activity) =>
+            public override Chain<T, V> Compose<V>(Chain<T, V> activity) =>
                 new Activity<V>(comparer, activity);
 
-            private class Activity<V> : ConsumerActivity<T, T, V>
+            private class Activity<V> : Activity<T, T, V>
             {
                 private readonly HashSet<T> seen;
 
-                public Activity(IEqualityComparer<T> comparer, ConsumerActivity<T, V> next)
+                public Activity(IEqualityComparer<T> comparer, Chain<T, V> next)
                     : base(next)
                 {
                     this.seen = new HashSet<T>(comparer);

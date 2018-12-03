@@ -25,7 +25,7 @@ namespace L2O2
                 return consumer.ReplaceTail(new SelectImpl<T, U, V>(Selector, u2v));
             }
 
-            public ConsumerActivity<T, V> Compose<V>(ConsumerActivity<U, V> activity)
+            public Chain<T, V> Compose<V>(Chain<U, V> activity)
             {
                 return new Activity<V>(Selector, activity);
             }
@@ -41,11 +41,11 @@ namespace L2O2
                 return true;
             }
 
-            private class Activity<V> : ConsumerActivity<T, U, V>
+            private class Activity<V> : Activity<T, U, V>
             {
                 private readonly Func<T, U> selector;
 
-                public Activity(Func<T, U> selector, ConsumerActivity<U, V> next)
+                public Activity(Func<T, U> selector, Chain<U, V> next)
                     : base(next)
                 {
                     this.selector = selector;

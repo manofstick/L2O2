@@ -15,7 +15,7 @@ namespace L2O2
                 this.predicate = predicate;
             }
 
-            public ConsumerActivity<T, U> Compose<U>(ConsumerActivity<T, U> activity)
+            public Chain<T, U> Compose<U>(Chain<T, U> activity)
             {
                 return new Activity<U>(predicate, activity);
             }
@@ -39,11 +39,11 @@ namespace L2O2
                 return true;
             }
 
-            private class Activity<U> : ConsumerActivity<T, T, U>
+            private class Activity<U> : Activity<T, T, U>
             {
                 private readonly Func<T, bool> selector;
 
-                public Activity(Func<T, bool> predicate, ConsumerActivity<T, U> next)
+                public Activity(Func<T, bool> predicate, Chain<T, U> next)
                     : base(next)
                 {
                     this.selector = predicate;

@@ -7,6 +7,6 @@
         bool TryOwn();
         ProcessNextResult OwnedProcessNext(T t, out U u);
 
-        ConsumerActivity<T, V> Compose<V>(ConsumerActivity<U,V> activity);
+        Chain<T, V> Compose<V>(Chain<U,V> activity);
     }
 }

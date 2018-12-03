@@ -27,25 +27,41 @@ namespace L2O2.Core
             result == ProcessNextResult.OK;
     }
 
-    abstract class ConsumerActivity<T> : Chain
+    abstract class Chain<T> : Chain
     {
         public abstract ProcessNextResult ProcessNext(T input);
     }
 
-    abstract class ConsumerActivity<T, U> : ConsumerActivity<T>
+    abstract class Chain<T, U> : Chain<T>
     {
     }
 
-    abstract class ConsumerActivity<T, U, V> : ConsumerActivity<T,V>
+    abstract class Activity<T, U, V> : Chain<T,V>
     {
-        protected readonly ConsumerActivity<U, V> next;
+        protected readonly Chain<U, V> next;
 
-        protected ConsumerActivity(ConsumerActivity<U, V> next)
+        protected Activity(Chain<U, V> next)
         {
             this.next = next;
         }
 
         public override void ChainComplete() => next.ChainComplete();
         public override void ChainDispose() => next.ChainDispose();
+    }
+
+    sealed class ChainEnd { private ChainEnd() { } }
+
+    abstract class Consumer<T, R>
+        : Chain<T, ChainEnd>
+    {
+        protected Consumer(R initalResult)
+        {
+            Result = initalResult;
+        }
+
+        public R Result { get; protected set; }
+
+        public override void ChainComplete() { }
+        public override void ChainDispose() { }
     }
 }

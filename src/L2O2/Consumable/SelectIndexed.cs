@@ -19,7 +19,7 @@ namespace L2O2
                 this.selector = selector;
             }
 
-            public override ConsumerActivity<T, V> Compose<V>(ConsumerActivity<U, V> activity)
+            public override Chain<T, V> Compose<V>(Chain<U, V> activity)
             {
                 return new Activity<V>(selector, activity);
             }
@@ -40,13 +40,13 @@ namespace L2O2
                 return ProcessNextResult.OK;
             }
 
-            private class Activity<V> : ConsumerActivity<T, U, V>
+            private class Activity<V> : Activity<T, U, V>
             {
                 private readonly Func<T, int, U> selector;
 
                 private int index;
 
-                public Activity(Func<T, int, U> selector, ConsumerActivity<U, V> next)
+                public Activity(Func<T, int, U> selector, Chain<U, V> next)
                     : base(next)
                 {
                     this.selector = selector;

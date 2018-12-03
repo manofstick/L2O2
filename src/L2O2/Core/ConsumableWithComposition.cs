@@ -37,7 +37,7 @@ namespace L2O2.Core
             return processNextResult;
         }
 
-        ConsumerActivity<T, W> ITransmutation<T, V>.Compose<W>(ConsumerActivity<V, W> next)
+        Chain<T, W> ITransmutation<T, V>.Compose<W>(Chain<V, W> next)
         {
             return first.Compose(second.Compose(next));
         }
