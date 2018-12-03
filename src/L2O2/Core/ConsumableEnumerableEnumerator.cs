@@ -30,7 +30,7 @@ namespace L2O2.Core
         internal static IEnumerator<TResult> Create(IEnumerable<T> enumerable, ITransmutation<T, TResult> factory)
         {
             var arrayEnumerator = new ConsumableEnumerableEnumerator<T, TResult>(enumerable);
-            arrayEnumerator.activity = factory.Compose(arrayEnumerator, arrayEnumerator);
+            arrayEnumerator.activity = factory.Compose(arrayEnumerator);
             return arrayEnumerator;
         }
 

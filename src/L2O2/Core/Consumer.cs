@@ -4,10 +4,7 @@ namespace L2O2.Core
 {
     abstract class Consumer<T, R>
         : ConsumerActivity<T, T>
-        , IOutOfBand
     {
-        private Action listeners;
-
         protected Consumer(R initalResult)
         {
             Result = initalResult;

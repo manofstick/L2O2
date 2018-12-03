@@ -36,9 +36,9 @@ namespace L2O2.Core
             return false;
         }
 
-        ConsumerActivity<T, W> ITransmutation<T, V>.Compose<W>(IOutOfBand outOfBand, ConsumerActivity<V, W> next)
+        ConsumerActivity<T, W> ITransmutation<T, V>.Compose<W>(ConsumerActivity<V, W> next)
         {
-            return first.Compose(outOfBand, second.Compose(outOfBand, next));
+            return first.Compose(second.Compose(next));
         }
     }
 }

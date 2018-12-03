@@ -40,7 +40,7 @@ namespace L2O2.Core
         public override TResult Consume<TResult>(Consumer<V, TResult> consumer)
         {
             var transform = (ITransmutation<T, V>)this;
-            var activity = transform.Compose(consumer, consumer);
+            var activity = transform.Compose(consumer);
             try
             {
                 foreach(var item in enumerable)

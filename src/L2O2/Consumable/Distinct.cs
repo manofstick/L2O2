@@ -13,7 +13,7 @@ namespace L2O2
             public DistinctImpl(IEqualityComparer<T> comparer) =>
                 this.comparer = comparer;
 
-            public override ConsumerActivity<T, V> Compose<V>(IOutOfBand consumer, ConsumerActivity<T, V> activity) =>
+            public override ConsumerActivity<T, V> Compose<V>(ConsumerActivity<T, V> activity) =>
                 new Activity<V>(comparer, activity);
 
             private class Activity<V> : ConsumerActivity<T, T, V>

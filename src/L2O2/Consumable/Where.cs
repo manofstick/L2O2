@@ -15,7 +15,7 @@ namespace L2O2
                 this.predicate = predicate;
             }
 
-            public ConsumerActivity<T, U> Compose<U>(IOutOfBand consumer, ConsumerActivity<T, U> activity)
+            public ConsumerActivity<T, U> Compose<U>(ConsumerActivity<T, U> activity)
             {
                 return new Activity<U>(predicate, activity);
             }

@@ -27,7 +27,7 @@ namespace L2O2.Core
         internal static IEnumerator<TResult> Create(List<T> list, ITransmutation<T, TResult> factory)
         {
             var listEnumerator = new ConsumableListEnumerator<T, TResult>(list);
-            listEnumerator.activity = factory.Compose(listEnumerator, listEnumerator);
+            listEnumerator.activity = factory.Compose(listEnumerator);
             return listEnumerator;
         }
 

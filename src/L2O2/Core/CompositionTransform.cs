@@ -21,9 +21,9 @@ namespace L2O2.Core
             return new CompositionTransform<T, U, V>(first, second);
 	    }
 
-        public ConsumerActivity<T, W> Compose<W>(IOutOfBand outOfBand, ConsumerActivity<V, W> next)
+        public ConsumerActivity<T, W> Compose<W>(ConsumerActivity<V, W> next)
 	    {
-		    return first.Compose(outOfBand, second.Compose(outOfBand, next));
+		    return first.Compose(second.Compose(next));
 	    }
 
         public bool TryOwn()

@@ -89,7 +89,7 @@ namespace L2O2.Core
 
         private TResult Consume_Pipeline<TResult>(ITransmutation<T, V> transform, Consumer<V, TResult> consumer)
         {
-            var activity = transform.Compose(consumer, consumer);
+            var activity = transform.Compose(consumer);
             try
             {
                 for (var i = 0; i < array.Length; ++i)

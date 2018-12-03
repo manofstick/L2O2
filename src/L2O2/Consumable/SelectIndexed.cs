@@ -19,7 +19,7 @@ namespace L2O2
                 this.selector = selector;
             }
 
-            public override ConsumerActivity<T, V> Compose<V>(IOutOfBand consumer, ConsumerActivity<U, V> activity)
+            public override ConsumerActivity<T, V> Compose<V>(ConsumerActivity<U, V> activity)
             {
                 return new Activity<V>(selector, activity);
             }

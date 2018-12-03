@@ -25,7 +25,7 @@ namespace L2O2
                 return consumer.ReplaceTail(new SelectImpl<T, U, V>(Selector, u2v));
             }
 
-            public ConsumerActivity<T, V> Compose<V>(IOutOfBand consumer, ConsumerActivity<U, V> activity)
+            public ConsumerActivity<T, V> Compose<V>(ConsumerActivity<U, V> activity)
             {
                 return new Activity<V>(Selector, activity);
             }

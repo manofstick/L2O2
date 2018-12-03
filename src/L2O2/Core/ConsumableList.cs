@@ -88,7 +88,7 @@ namespace L2O2.Core
 
         private TResult Consume_Pipeline<TResult>(ITransmutation<T, V>  transform, Consumer<V, TResult> consumer)
         {
-            var activity = transform.Compose(consumer, consumer);
+            var activity = transform.Compose(consumer);
             try
             {
                 // don't use index of list to ensure list modifications throw exceptions
