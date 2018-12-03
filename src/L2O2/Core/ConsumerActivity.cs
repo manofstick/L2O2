@@ -1,4 +1,6 @@
-﻿namespace L2O2.Core
+﻿using System;
+
+namespace L2O2.Core
 {
     abstract class Chain
     {
@@ -6,9 +8,19 @@
         public abstract void ChainDispose();
     }
 
+    [Flags]
+    enum ProcessNextResult
+    {
+        OK             = 0x00,
+        Filtered       = 0x02,
+        Halted         = 0x80,
+        HaltedActivity = 0x81,
+        HaltedConsumer = 0x82,
+    }
+
     abstract class ConsumerActivity<T> : Chain
     {
-        public abstract bool ProcessNext(T input);
+        public abstract ProcessNextResult ProcessNext(T input);
     }
 
     abstract class ConsumerActivity<T, U> : ConsumerActivity<T>

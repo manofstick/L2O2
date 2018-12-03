@@ -16,14 +16,14 @@ namespace L2O2
                 this.selector = selector;
             }
 
-            public override bool ProcessNext(T input)
+            public override ProcessNextResult ProcessNext(T input)
             {
                 if (selector(input))
                 {
                     Result = true;
-                    StopFurtherProcessing();
+                    return ProcessNextResult.HaltedConsumer;
                 }
-                return true; /*ignored*/
+                return ProcessNextResult.OK;
             }
         }
 

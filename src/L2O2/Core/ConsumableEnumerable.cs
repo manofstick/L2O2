@@ -45,10 +45,9 @@ namespace L2O2.Core
             {
                 foreach(var item in enumerable)
                 { 
-                    if (consumer.Halted)
+                    var processNextResult = activity.ProcessNext(item);
+                    if (processNextResult.HasFlag(ProcessNextResult.Halted))
                         break;
-
-                    activity.ProcessNext(item);
                 }
                 activity.ChainComplete();
             }

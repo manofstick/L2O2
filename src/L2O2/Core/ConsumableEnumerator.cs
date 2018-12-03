@@ -6,14 +6,16 @@ namespace L2O2.Core
 {
     internal abstract class ConsumableEnumerator<T> : Consumer<T, T>, IEnumerator<T>
     {
+        protected ProcessNextResult processNextResult = ProcessNextResult.OK;
+
         protected ConsumableEnumerator() : base(default(T)) { }
 
         internal virtual Chain StartOfChain { get; }
 
-        public override bool ProcessNext(T input)
+        public override ProcessNextResult ProcessNext(T input)
         {
             Result = input;
-            return true;
+            return ProcessNextResult.OK;
         }
 
         public virtual T Current => Result;

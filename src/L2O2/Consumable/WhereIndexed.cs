@@ -30,8 +30,8 @@ namespace L2O2
                 return false;
             }
 
-            public override bool OwnedProcessNext(T tin, out T tout) =>
-                predicate(tout = tin, index++);
+            public override ProcessNextResult OwnedProcessNext(T tin, out T tout) =>
+                predicate(tout = tin, index++) ? ProcessNextResult.OK : ProcessNextResult.Filtered;
 
             private class Activity<V> : ConsumerActivity<T, T, V>
             {
@@ -45,8 +45,8 @@ namespace L2O2
                     this.predicate = predicate;
                 }
 
-                public override bool ProcessNext(T input) =>
-                    predicate(input, index++) && next.ProcessNext(input);
+                public override ProcessNextResult ProcessNext(T input) =>
+                    predicate(input, index++) ? next.ProcessNext(input) : ProcessNextResult.Filtered;
             }
         }
 

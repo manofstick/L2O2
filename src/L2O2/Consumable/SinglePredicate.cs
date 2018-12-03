@@ -18,7 +18,7 @@ namespace L2O2
                 found = false;
             }
 
-            public override bool ProcessNext(T input)
+            public override ProcessNextResult ProcessNext(T input)
             {
                 if (predicate(input))
                 {
@@ -29,7 +29,7 @@ namespace L2O2
                     Result = input;
                 }
 
-                return true; /*ignored*/
+                return ProcessNextResult.OK;
             }
 
             public override void ChainComplete()

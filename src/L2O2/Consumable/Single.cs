@@ -16,7 +16,7 @@ namespace L2O2
                 found = false;
             }
 
-            public override bool ProcessNext(T input)
+            public override ProcessNextResult ProcessNext(T input)
             {
                 if (found)
                     throw new InvalidOperationException("Sequence contained multiple elements");
@@ -24,7 +24,7 @@ namespace L2O2
                 found = true;
                 Result = input;
 
-                return true; /*ignored*/
+                return ProcessNextResult.OK;
             }
 
             public override void ChainComplete()

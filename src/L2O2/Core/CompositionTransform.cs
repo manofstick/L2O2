@@ -31,13 +31,14 @@ namespace L2O2.Core
             return first.TryOwn() && second.TryOwn();
         }
 
-        public bool OwnedProcessNext(T t, out V v)
+        public ProcessNextResult OwnedProcessNext(T t, out V v)
         {
-            if (first.OwnedProcessNext(t, out var u))
+            var processNextResult = first.OwnedProcessNext(t, out var u);
+            if (processNextResult == ProcessNextResult.OK)
                 return second.OwnedProcessNext(u, out v);
 
             v = default(V);
-            return false;
+            return processNextResult;
         }
     }
 }

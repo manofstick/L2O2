@@ -19,7 +19,7 @@ namespace L2O2
                 this.func = func;
             }
 
-            public override bool ProcessNext(T input)
+            public override ProcessNextResult ProcessNext(T input)
             {
                 if (first)
                 {
@@ -31,7 +31,7 @@ namespace L2O2
                     Result = func(Result, input);
                 }
 
-                return true; /*ignored*/
+                return ProcessNextResult.OK;
             }
 
             public override void ChainComplete()
@@ -58,11 +58,11 @@ namespace L2O2
                 this.resultSelector = resultSelector;
             }
 
-            public override bool ProcessNext(T input)
+            public override ProcessNextResult ProcessNext(T input)
             {
                 this.accumulate = func(accumulate, input);
 
-                return true; /*ignored*/
+                return ProcessNextResult.OK;
             }
 
             public override void ChainComplete()

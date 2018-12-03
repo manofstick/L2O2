@@ -20,17 +20,17 @@ namespace L2O2
                 return new Activity<U>(predicate, activity);
             }
 
-            public bool OwnedProcessNext(T tin, out T tout)
+            public ProcessNextResult OwnedProcessNext(T tin, out T tout)
             {
                 if (predicate(tin))
                 {
                     tout = tin;
-                    return true;
+                    return ProcessNextResult.OK;
                 }
                 else
                 {
                     tout = default(T);
-                    return false;
+                    return ProcessNextResult.Filtered;
                 }
             }
 
@@ -49,10 +49,8 @@ namespace L2O2
                     this.selector = predicate;
                 }
 
-                public override bool ProcessNext(T input)
-                {
-                    return selector(input) && next.ProcessNext(input);
-                }
+                public override ProcessNextResult ProcessNext(T input) =>
+                    selector(input) ? next.ProcessNext(input) : ProcessNextResult.Filtered;
             }
         }
 

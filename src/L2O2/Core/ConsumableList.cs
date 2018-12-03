@@ -71,11 +71,11 @@ namespace L2O2.Core
                 // don't use index of list to ensure list modifications throw exceptions
                 foreach(var t in list)
                 {
-                    if (consumer.Halted)
+                    var processNextResult = transform.OwnedProcessNext(t, out var u);
+                    if (processNextResult == ProcessNextResult.OK)
+                        processNextResult = consumer.ProcessNext(u);
+                    if (processNextResult.HasFlag(ProcessNextResult.Halted))
                         break;
-
-                    if (transform.OwnedProcessNext(t, out var u))
-                        consumer.ProcessNext(u);
                 }
                 consumer.ChainComplete();
             }
@@ -94,10 +94,9 @@ namespace L2O2.Core
                 // don't use index of list to ensure list modifications throw exceptions
                 foreach (var t in list)
                 {
-                    if (consumer.Halted)
+                    var processNextResult = activity.ProcessNext(t);
+                    if (processNextResult.HasFlag(ProcessNextResult.Halted))
                         break;
-
-                    activity.ProcessNext(t);
                 }
                 activity.ChainComplete();
             }

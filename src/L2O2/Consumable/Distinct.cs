@@ -26,8 +26,8 @@ namespace L2O2
                     this.seen = new HashSet<T>(comparer);
                 }
 
-                public override bool ProcessNext(T input) =>
-                    seen.Add(input) && next.ProcessNext(input);
+                public override ProcessNextResult ProcessNext(T input) =>
+                    seen.Add(input) ? next.ProcessNext(input) : ProcessNextResult.Filtered;
             }
         }
 

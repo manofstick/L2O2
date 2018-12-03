@@ -6,7 +6,7 @@ namespace L2O2.Core
     {
         public abstract ConsumerActivity<T, V> Compose<V>(ConsumerActivity<U, V> activity);
 
-        public virtual bool OwnedProcessNext(T t, out U u)
+        public virtual ProcessNextResult OwnedProcessNext(T t, out U u)
         {
             throw new NotImplementedException();
         }

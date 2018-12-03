@@ -30,10 +30,10 @@ namespace L2O2
                 return new Activity<V>(Selector, activity);
             }
 
-            public bool OwnedProcessNext(T t, out U u)
+            public ProcessNextResult OwnedProcessNext(T t, out U u)
             {
                 u = Selector(t);
-                return true;
+                return ProcessNextResult.OK;
             }
 
             public bool TryOwn()
@@ -51,10 +51,8 @@ namespace L2O2
                     this.selector = selector;
                 }
 
-                public override bool ProcessNext(T input)
-                {
-                    return next.ProcessNext(selector(input));
-                }
+                public override ProcessNextResult ProcessNext(T input) => 
+                    next.ProcessNext(selector(input));
             }
         }
 

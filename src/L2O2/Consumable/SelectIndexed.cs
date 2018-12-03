@@ -34,10 +34,10 @@ namespace L2O2
                 return false;
             }
 
-            public override bool OwnedProcessNext(T t, out U u)
+            public override ProcessNextResult OwnedProcessNext(T t, out U u)
             {
                 u = selector(t, index++);
-                return true;
+                return ProcessNextResult.OK;
             }
 
             private class Activity<V> : ConsumerActivity<T, U, V>
@@ -52,10 +52,8 @@ namespace L2O2
                     this.selector = selector;
                 }
 
-                public override bool ProcessNext(T input)
-                {
-                    return next.ProcessNext(selector(input, index++));
-                }
+                public override ProcessNextResult ProcessNext(T input) =>
+                    next.ProcessNext(selector(input, index++));
             }
         }
 

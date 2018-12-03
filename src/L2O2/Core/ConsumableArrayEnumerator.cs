@@ -32,13 +32,14 @@ namespace L2O2.Core
         public override bool MoveNext()
         {
         tryAgain:
-            if (idx >= array.Length || Halted)
+            if (idx >= array.Length || processNextResult.HasFlag(ProcessNextResult.Halted))
             {
                 activity.ChainComplete();
                 return false;
             }
 
-            if (!activity.ProcessNext(array[idx++]))
+            processNextResult = activity.ProcessNext(array[idx++]);
+            if (processNextResult != ProcessNextResult.OK)
                 goto tryAgain;
 
             return true;

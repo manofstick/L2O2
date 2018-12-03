@@ -9,10 +9,10 @@
             return next;
         }
 
-        public bool OwnedProcessNext(T t, out T u)
+        public ProcessNextResult OwnedProcessNext(T t, out T u)
         {
             u = t;
-            return true;
+            return ProcessNextResult.OK;
         }
 
         public bool TryOwn()

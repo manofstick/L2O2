@@ -43,13 +43,14 @@ namespace L2O2.Core
             }
 
         tryAgain:
-            if (!enumerator.MoveNext() || Halted)
+            if (!enumerator.MoveNext() || processNextResult.HasFlag(ProcessNextResult.Halted))
             {
                 activity.ChainComplete();
                 return false;
             }
 
-            if (!activity.ProcessNext(enumerator.Current))
+            processNextResult = activity.ProcessNext(enumerator.Current);
+            if (processNextResult != ProcessNextResult.OK)
                 goto tryAgain;
 
             return true;
