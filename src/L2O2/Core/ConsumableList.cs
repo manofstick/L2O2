@@ -72,9 +72,9 @@ namespace L2O2.Core
                 foreach(var t in list)
                 {
                     var processNextResult = transform.OwnedProcessNext(t, out var u);
-                    if (processNextResult == ProcessNextResult.OK)
+                    if (processNextResult.IsOK())
                         processNextResult = consumer.ProcessNext(u);
-                    if (processNextResult.HasFlag(ProcessNextResult.Halted))
+                    if (processNextResult.IsHalted())
                         break;
                 }
                 consumer.ChainComplete();
@@ -95,7 +95,7 @@ namespace L2O2.Core
                 foreach (var t in list)
                 {
                     var processNextResult = activity.ProcessNext(t);
-                    if (processNextResult.HasFlag(ProcessNextResult.Halted))
+                    if (processNextResult.IsHalted())
                         break;
                 }
                 activity.ChainComplete();

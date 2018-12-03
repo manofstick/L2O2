@@ -73,10 +73,10 @@ namespace L2O2.Core
                 for (var i = 0; i < array.Length; ++i)
                 {
                     var processNextResult = transform.OwnedProcessNext(array[i], out var u);
-                    if (processNextResult == ProcessNextResult.OK)
+                    if (processNextResult.IsOK())
                         processNextResult = consumer.ProcessNext(u);
 
-                    if (processNextResult.HasFlag(ProcessNextResult.Halted))
+                    if (processNextResult.IsHalted())
                         break;
                 }
                 consumer.ChainComplete();
@@ -96,7 +96,7 @@ namespace L2O2.Core
                 for (var i = 0; i < array.Length; ++i)
                 {
                     var processNextResult = activity.ProcessNext(array[i]);
-                    if (processNextResult.HasFlag(ProcessNextResult.Halted))
+                    if (processNextResult.IsHalted())
                         break;
                 }
                 activity.ChainComplete();

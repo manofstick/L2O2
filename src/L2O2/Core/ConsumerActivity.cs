@@ -18,6 +18,15 @@ namespace L2O2.Core
         HaltedConsumer = 0x82,
     }
 
+    static class ProcessNextResultHelper
+    {
+        public static bool IsHalted(this ProcessNextResult result) =>
+            (result & ProcessNextResult.Halted) == ProcessNextResult.Halted;
+
+        public static bool IsOK(this ProcessNextResult result) =>
+            result == ProcessNextResult.OK;
+    }
+
     abstract class ConsumerActivity<T> : Chain
     {
         public abstract ProcessNextResult ProcessNext(T input);

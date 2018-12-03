@@ -34,7 +34,7 @@ namespace L2O2.Core
         public ProcessNextResult OwnedProcessNext(T t, out V v)
         {
             var processNextResult = first.OwnedProcessNext(t, out var u);
-            if (processNextResult == ProcessNextResult.OK)
+            if (processNextResult.IsOK())
                 return second.OwnedProcessNext(u, out v);
 
             v = default(V);
