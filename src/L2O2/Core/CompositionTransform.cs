@@ -1,35 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using static L2O2.Consumable;
-
-namespace L2O2.Core
+﻿namespace L2O2.Core
 {
+    static class CompositionTransform
+    {
+        public static ITransmutation<T, V> Combine<T, U, V>(ITransmutation<T, U> first, ITransmutation<U, V> second) =>
+            new CompositionTransform<T, U, V>(first, second);
+    }
+
     internal class CompositionTransform<T, U, V> : ITransmutation<T, V>
     {
-	    internal ITransmutation<U, V> second;
-	    internal ITransmutation<T, U> first;
+        private readonly ITransmutation<T, U> first;
+        private readonly ITransmutation<U, V> second;
 
-	    public CompositionTransform(ITransmutation<T, U> first, ITransmutation<U, V> second)
-	    {
-		    this.first = first;
-		    this.second = second;
-	    }
+        public CompositionTransform(ITransmutation<T, U> first, ITransmutation<U, V> second) =>
+            (this.first, this.second) = (first, second);
 
-	    internal static ITransmutation<T, V> Combine(ITransmutation<T, U> first, ITransmutation<U, V> second)
-	    {
-            return new CompositionTransform<T, U, V>(first, second);
-	    }
+        public Chain<T, W> Compose<W>(Chain<V, W> next) =>
+		    first.Compose(second.Compose(next));
 
-        public Chain<T, W> Compose<W>(Chain<V, W> next)
-	    {
-		    return first.Compose(second.Compose(next));
-	    }
-
-        public bool TryOwn()
-        {
-            return first.TryOwn() && second.TryOwn();
-        }
+        public bool TryOwn() =>
+            first.TryOwn() && second.TryOwn();
 
         public ProcessNextResult OwnedProcessNext(T t, out V v)
         {

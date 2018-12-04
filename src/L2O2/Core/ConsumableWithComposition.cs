@@ -52,7 +52,7 @@ namespace L2O2.Core
             if (ReferenceEquals(first, IdentityTransform<T>.Instance))
                 return Create((ITransmutation<T, V>)second, next);
 
-            return Create(new CompositionTransform<T, U, V>(first, second), next);
+            return Create(CompositionTransform.Combine(first, second), next);
         }
 
         public override Consumable<W> ReplaceTail<U_alias, W>(ITransmutation<U_alias, W> selectImpl)
