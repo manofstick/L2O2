@@ -7,46 +7,50 @@ namespace L2O2.Core
         public static Result Consume<T, U, V, Result>(T[] array, IComposition<T, U, V> composition, Consumer<V, Result> consumer)
         {
             if (array.Length == 0)
-                return Empty(consumer);
+                Empty(consumer);
             else
             {
                 var transform = composition.Composed;
 
                 const int MaxLengthToAvoidPipelineCreationCost = 5;
                 if (array.Length <= MaxLengthToAvoidPipelineCreationCost && transform.TryOwn())
-                    return Owned(array, transform, consumer);
-
-                return Pipeline(array, transform, consumer);
+                    Owned(array, transform, consumer);
+                else
+                    Pipeline(array, composition.Composed.Compose(consumer));
             }
+            return consumer.Result;
         }
 
         public static Result Consume<T, U, V, Result>(List<T> lst, IComposition<T, U, V> composition, Consumer<V, Result> consumer)
         {
             if (lst.Count == 0)
-                return Empty(consumer);
+                Empty(consumer);
             else
             {
                 var transform = composition.Composed;
 
                 const int MaxLengthToAvoidPipelineCreationCost = 5;
                 if (lst.Count <= MaxLengthToAvoidPipelineCreationCost && transform.TryOwn())
-                    return Owned(lst, transform, consumer);
-
-                return Pipeline(lst, transform, consumer);
+                    Owned(lst, transform, consumer);
+                else
+                    Pipeline(lst, composition.Composed.Compose(consumer));
             }
+            return consumer.Result;
         }
 
-        public static Result Consume<T, U, V, Result>(IEnumerable<T> e, IComposition<T, U, V> composition, Consumer<V, Result> consumer) =>
-            Pipeline(e, composition.Composed, consumer);
+        public static Result Consume<T, U, V, Result>(IEnumerable<T> e, IComposition<T, U, V> composition, Consumer<V, Result> consumer)
+        {
+            Pipeline(e, composition.Composed.Compose(consumer));
+            return consumer.Result;
+        }
 
-        private static Result Empty<V, Result>(Consumer<V, Result> consumer)
+        private static void Empty(Chain consumer)
         {
             try { consumer.ChainComplete(); }
             finally { consumer.ChainDispose(); }
-            return consumer.Result;
         }
 
-        private static TResult Owned<T, V, TResult>(T[] array, ITransmutation<T, V> transform, Consumer<V, TResult> consumer)
+        private static void Owned<T, V>(T[] array, ITransmutation<T, V> transform, Chain<V> finalLink)
         {
             try
             {
@@ -54,21 +58,20 @@ namespace L2O2.Core
                 {
                     var processNextResult = transform.OwnedProcessNext(item, out var u);
                     if (processNextResult.IsOK())
-                        processNextResult = consumer.ProcessNext(u);
+                        processNextResult = finalLink.ProcessNext(u);
 
                     if (processNextResult.IsHalted())
                         break;
                 }
-                consumer.ChainComplete();
+                finalLink.ChainComplete();
             }
             finally
             {
-                consumer.ChainDispose();
+                finalLink.ChainDispose();
             }
-            return consumer.Result;
         }
 
-        private static TResult Owned<T, V, TResult>(List<T> lst, ITransmutation<T, V> transform, Consumer<V, TResult> consumer)
+        private static void Owned<T, V>(List<T> lst, ITransmutation<T, V> transform, Chain<V> finalLink)
         {
             try
             {
@@ -76,78 +79,71 @@ namespace L2O2.Core
                 {
                     var processNextResult = transform.OwnedProcessNext(item, out var u);
                     if (processNextResult.IsOK())
-                        processNextResult = consumer.ProcessNext(u);
+                        processNextResult = finalLink.ProcessNext(u);
 
                     if (processNextResult.IsHalted())
                         break;
                 }
-                consumer.ChainComplete();
+                finalLink.ChainComplete();
             }
             finally
             {
-                consumer.ChainDispose();
+                finalLink.ChainDispose();
             }
-            return consumer.Result;
         }
 
-        private static TResult Pipeline<T, V, TResult>(T[] array, ITransmutation<T, V> transform, Consumer<V, TResult> consumer)
+        private static void Pipeline<T>(T[] array, Chain<T> chain)
         {
-            var activity = transform.Compose(consumer);
             try
             {
                 foreach (var item in array)
                 {
-                    var processNextResult = activity.ProcessNext(item);
+                    var processNextResult = chain.ProcessNext(item);
                     if (processNextResult.IsHalted())
                         break;
                 }
-                activity.ChainComplete();
+                chain.ChainComplete();
             }
             finally
             {
-                activity.ChainDispose();
+                chain.ChainDispose();
             }
-            return consumer.Result;
         }
 
-        private static TResult Pipeline<T, V, TResult>(List<T> lst, ITransmutation<T, V> transform, Consumer<V, TResult> consumer)
+        private static void Pipeline<T>(List<T> lst, Chain<T> chain)
         {
-            var activity = transform.Compose(consumer);
             try
             {
                 foreach (var item in lst)
                 {
-                    var processNextResult = activity.ProcessNext(item);
+                    var processNextResult = chain.ProcessNext(item);
                     if (processNextResult.IsHalted())
                         break;
                 }
-                activity.ChainComplete();
+                chain.ChainComplete();
             }
             finally
             {
-                activity.ChainDispose();
+                chain.ChainDispose();
             }
-            return consumer.Result;
         }
 
-        private static TResult Pipeline<T, V, TResult>(IEnumerable<T> e, ITransmutation<T, V> transform, Consumer<V, TResult> consumer)
+        private static void Pipeline<T>(IEnumerable<T> e, Chain<T> chain)
         {
-            var activity = transform.Compose(consumer);
             try
             {
                 foreach (var item in e)
                 {
-                    var processNextResult = activity.ProcessNext(item);
+                    var processNextResult = chain.ProcessNext(item);
                     if (processNextResult.IsHalted())
                         break;
                 }
-                activity.ChainComplete();
+                chain.ChainComplete();
             }
             finally
             {
-                activity.ChainDispose();
+                chain.ChainDispose();
             }
-            return consumer.Result;
         }
 
     }
