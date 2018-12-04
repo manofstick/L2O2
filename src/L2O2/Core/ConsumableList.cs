@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using static L2O2.Consumable;
+﻿using System.Collections.Generic;
 
 namespace L2O2.Core
 {
@@ -14,89 +12,10 @@ namespace L2O2.Core
         public override Consumable<W> Create<VV, W>(ITransmutation<T, VV> first, ITransmutation<VV, W> second) =>
             new ConsumableList<T, VV, W>(list, first, second);
 
-        public override IEnumerator<V> GetEnumerator()
-        {
-            if (list.Count == 0)
-                return Utils.EmptyEnumerator<V>.Instance;
+        public override IEnumerator<V> GetEnumerator() =>
+            Impl.GetEnumerator(list, this);
 
-            if (ReferenceEquals(first, IdentityTransform<T>.Instance) && second is SelectImpl<T, V> t2v)
-                return GetEnumerator_Select(t2v);
-
-            return ConsumableListEnumerator<T, V>.Create(list, this);
-        }
-
-        private IEnumerator<V> GetEnumerator_Select(SelectImpl<T, V> t2v)
-        {
-            var f = t2v.Selector;
-            foreach (var item in list)
-                yield return f(item);
-        }
-
-        public override Result Consume<Result>(Consumer<V, Result> consumer)
-        {
-            if (list.Count == 0)
-                return Consume_Empty(consumer);
-            else
-            {
-                const int MaxLengthToAvoidPipelineCreationCost = 5;
-
-                var transform = GetTransform();
-
-                if (list.Count <= MaxLengthToAvoidPipelineCreationCost && transform.TryOwn())
-                    return Consume_Owned(transform, consumer);
-
-                return Consume_Pipeline(transform, consumer);
-            }
-        }
-
-        private static Result Consume_Empty<Result>(Consumer<V, Result> consumer)
-        {
-            try { consumer.ChainComplete(); }
-            finally { consumer.ChainDispose(); }
-            return consumer.Result;
-        }
-
-        private TResult Consume_Owned<TResult>(ITransmutation<T, V> transform, Consumer<V, TResult> consumer)
-        {
-            try
-            {
-                // don't use index of list to ensure list modifications throw exceptions
-                foreach(var t in list)
-                {
-                    var processNextResult = transform.OwnedProcessNext(t, out var u);
-                    if (processNextResult.IsOK())
-                        processNextResult = consumer.ProcessNext(u);
-                    if (processNextResult.IsHalted())
-                        break;
-                }
-                consumer.ChainComplete();
-            }
-            finally
-            {
-                consumer.ChainDispose();
-            }
-            return consumer.Result;
-        }
-
-        private TResult Consume_Pipeline<TResult>(ITransmutation<T, V>  transform, Consumer<V, TResult> consumer)
-        {
-            var activity = transform.Compose(consumer);
-            try
-            {
-                // don't use index of list to ensure list modifications throw exceptions
-                foreach (var t in list)
-                {
-                    var processNextResult = activity.ProcessNext(t);
-                    if (processNextResult.IsHalted())
-                        break;
-                }
-                activity.ChainComplete();
-            }
-            finally
-            {
-                activity.ChainDispose();
-            }
-            return consumer.Result;
-        }
+        public override Result Consume<Result>(Consumer<V, Result> consumer) =>
+            Impl.Consume(list, this, consumer);
     }
 }

@@ -7,16 +7,25 @@ namespace L2O2.Core
         Consumable<V> Create<U, V>(ITransmutation<T, U> first, ITransmutation<U, V> second);
     }
 
-    internal abstract class ConsumableWithComposition<T, U, V> : Consumable<V>, ITransmutation<T, V>, IConsumableWithCompositionConstruct<T>
+    internal interface IComposition<T,U,V>
+    {
+        ITransmutation<T, U> First { get; }
+        ITransmutation<U, V> Second { get; }
+
+        ITransmutation<T, V> Composed { get; }
+    }
+
+    internal abstract class ConsumableWithComposition<T, U, V> : Consumable<V>, ITransmutation<T, V>, IConsumableWithCompositionConstruct<T>, IComposition<T,U,V>
     {
         protected readonly ITransmutation<T, U> first;
         protected readonly ITransmutation<U, V> second;
 
-        protected ConsumableWithComposition(ITransmutation<T, U> first, ITransmutation<U, V> second)
-        {
-            this.first = first;
-            this.second = second;
-        }
+        protected ConsumableWithComposition(ITransmutation<T, U> first, ITransmutation<U, V> second) =>
+            (this.first, this.second) = (first, second);
+
+        public ITransmutation<T, U> First => first;
+        public ITransmutation<U, V> Second => second;
+        public ITransmutation<T, V> Composed => GetTransform();
 
         protected ITransmutation<T, V> GetTransform()
         {
@@ -25,10 +34,8 @@ namespace L2O2.Core
                     : this;
         }
 
-        bool ITransmutation<T, V>.TryOwn()
-        {
-            return first.TryOwn() && second.TryOwn();
-        }
+        bool ITransmutation<T, V>.TryOwn() =>
+            first.TryOwn() && second.TryOwn();
 
         ProcessNextResult ITransmutation<T, V>.OwnedProcessNext(T t, out V v)
         {
@@ -40,10 +47,8 @@ namespace L2O2.Core
             return processNextResult;
         }
 
-        Chain<T, W> ITransmutation<T, V>.Compose<W>(Chain<V, W> next)
-        {
-            return first.Compose(second.Compose(next));
-        }
+        Chain<T, W> ITransmutation<T, V>.Compose<W>(Chain<V, W> next) =>
+            first.Compose(second.Compose(next));
 
         public override object Tail => second;
 
