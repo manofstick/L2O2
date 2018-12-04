@@ -6,7 +6,7 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        internal abstract class SelectImpl<T> : ITransmutation<T>
+        internal abstract class SelectImpl<T>
         {
             public abstract Consumable<U> AddSelector<U>(Consumable<T> consumer, Func<T, U> t2u);
         }

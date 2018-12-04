@@ -6,7 +6,7 @@ namespace L2O2.Core
     internal abstract class Consumable<T>
         : IEnumerable<T> 
     {
-        public abstract ITransmutation<T> Tail { get; }
+        public abstract object Tail { get; }
         public abstract Consumable<V> ReplaceTail<U, V>(ITransmutation<U, V> selectImpl);
         public abstract Consumable<U> AddTail<U>(ITransmutation<T, U> transform);
 

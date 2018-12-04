@@ -1,8 +1,6 @@
 ﻿namespace L2O2.Core
 {
-    internal interface ITransmutation<T> { }
-
-    internal interface ITransmutation<T,U> : ITransmutation<U>
+    internal interface ITransmutation<T,U>
     {
         bool TryOwn();
         ProcessNextResult OwnedProcessNext(T t, out U u);

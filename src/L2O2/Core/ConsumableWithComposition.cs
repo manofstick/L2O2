@@ -12,8 +12,6 @@ namespace L2O2.Core
         protected readonly ITransmutation<T, U> first;
         protected readonly ITransmutation<U, V> second;
 
-        public override ITransmutation<V> Tail => second;
-
         protected ConsumableWithComposition(ITransmutation<T, U> first, ITransmutation<U, V> second)
         {
             this.first = first;
@@ -46,6 +44,8 @@ namespace L2O2.Core
         {
             return first.Compose(second.Compose(next));
         }
+
+        public override object Tail => second;
 
         public override Consumable<W> AddTail<W>(ITransmutation<V, W> next)
         {
