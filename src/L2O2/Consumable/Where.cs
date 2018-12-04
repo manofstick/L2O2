@@ -10,47 +10,26 @@ namespace L2O2
         {
             internal readonly Func<T, bool> predicate;
 
-            public WhereImpl(Func<T, bool> predicate)
-            {
+            public WhereImpl(Func<T, bool> predicate) =>
                 this.predicate = predicate;
-            }
 
-            public Chain<T, U> Compose<U>(Chain<T, U> activity)
-            {
-                return new Activity<U>(predicate, activity);
-            }
+            public Chain<T, U> Compose<U>(Chain<T, U> activity) =>
+                new Activity<U>(predicate, activity);
 
-            public ProcessNextResult OwnedProcessNext(T tin, out T tout)
-            {
-                if (predicate(tin))
-                {
-                    tout = tin;
-                    return ProcessNextResult.OK;
-                }
-                else
-                {
-                    tout = default(T);
-                    return ProcessNextResult.Filtered;
-                }
-            }
+            public bool TryOwn() => true;
 
-            public bool TryOwn()
-            {
-                return true;
-            }
+            public ProcessNextResult OwnedProcessNext(T tin, out T tout) =>
+                predicate(tout = tin) ? ProcessNextResult.OK :  ProcessNextResult.Filtered;
 
             sealed class Activity<U> : Activity<T, T, U>
             {
-                private readonly Func<T, bool> selector;
+                private readonly Func<T, bool> predicate;
 
-                public Activity(Func<T, bool> predicate, Chain<T, U> next)
-                    : base(next)
-                {
-                    this.selector = predicate;
-                }
+                public Activity(Func<T, bool> predicate, Chain<T, U> next) : base(next) =>
+                    this.predicate = predicate;
 
                 public override ProcessNextResult ProcessNext(T input) =>
-                    selector(input) ? next.ProcessNext(input) : ProcessNextResult.Filtered;
+                    predicate(input) ? Next(input) : ProcessNextResult.Filtered;
             }
         }
 

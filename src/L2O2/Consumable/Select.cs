@@ -13,16 +13,18 @@ namespace L2O2
 
         internal class SelectImpl<T, U> : SelectImpl<U>, ITransmutation<T, U>
         {
-            public SelectImpl(Func<T, U> selector) => 
-                this.Selector = selector;
+            private readonly Func<T, U> t2u;
 
-            public Func<T, U> Selector { get; }
+            public SelectImpl(Func<T, U> selector) => 
+                t2u = selector;
+
+            public Func<T, U> Selector { get => t2u; }
 
             public override Consumable<V> AddSelector<V>(Consumable<U> consumer, Func<U, V> u2v) =>
-                consumer.ReplaceTail(new SelectImpl<T, U, V>(Selector, u2v));
+                consumer.ReplaceTail(new SelectImpl<T, U, V>(t2u, u2v));
 
             public Chain<T, V> Compose<V>(Chain<U, V> activity) =>
-                new Activity<V>(Selector, activity);
+                new Activity<V>(t2u, activity);
 
             public bool TryOwn() => true;
 
@@ -39,8 +41,8 @@ namespace L2O2
                 public Activity(Func<T, U> selector, Chain<U, V> next) : base(next) =>
                     this.selector = selector;
 
-                public override ProcessNextResult ProcessNext(T input) => 
-                    next.ProcessNext(selector(input));
+                public override ProcessNextResult ProcessNext(T input) =>
+                    Next(selector(input));
             }
         }
 

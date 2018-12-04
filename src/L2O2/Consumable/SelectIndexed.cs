@@ -14,15 +14,11 @@ namespace L2O2
 
             internal readonly Func<T, int, U> selector;
 
-            public SelectIndexedImpl(Func<T, int, U> selector)
-            {
+            public SelectIndexedImpl(Func<T, int, U> selector) =>
                 this.selector = selector;
-            }
 
-            public override Chain<T, V> Compose<V>(Chain<U, V> activity)
-            {
-                return new Activity<V>(selector, activity);
-            }
+            public override Chain<T, V> Compose<V>(Chain<U, V> activity) =>
+                new Activity<V>(selector, activity);
 
             public override bool TryOwn()
             {
@@ -46,14 +42,11 @@ namespace L2O2
 
                 private int index;
 
-                public Activity(Func<T, int, U> selector, Chain<U, V> next)
-                    : base(next)
-                {
+                public Activity(Func<T, int, U> selector, Chain<U, V> next) : base(next) =>
                     this.selector = selector;
-                }
 
                 public override ProcessNextResult ProcessNext(T input) =>
-                    next.ProcessNext(selector(input, index++));
+                    Next(selector(input, index++));
             }
         }
 

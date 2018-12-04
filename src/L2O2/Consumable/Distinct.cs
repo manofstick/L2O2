@@ -20,14 +20,11 @@ namespace L2O2
             {
                 private readonly HashSet<T> seen;
 
-                public Activity(IEqualityComparer<T> comparer, Chain<T, V> next)
-                    : base(next)
-                {
-                    this.seen = new HashSet<T>(comparer);
-                }
+                public Activity(IEqualityComparer<T> comparer, Chain<T, V> next) : base(next) =>
+                    seen = new HashSet<T>(comparer);
 
                 public override ProcessNextResult ProcessNext(T input) =>
-                    seen.Add(input) ? next.ProcessNext(input) : ProcessNextResult.Filtered;
+                    seen.Add(input) ? Next(input) : ProcessNextResult.Filtered;
             }
         }
 

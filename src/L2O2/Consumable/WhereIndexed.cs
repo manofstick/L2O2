@@ -39,14 +39,11 @@ namespace L2O2
 
                 private int index;
 
-                public Activity(Func<T, int, bool> predicate, Chain<T, V> next)
-                    : base(next)
-                {
+                public Activity(Func<T, int, bool> predicate, Chain<T, V> next) : base(next) =>
                     this.predicate = predicate;
-                }
 
                 public override ProcessNextResult ProcessNext(T input) =>
-                    predicate(input, index++) ? next.ProcessNext(input) : ProcessNextResult.Filtered;
+                    predicate(input, index++) ? Next(input) : ProcessNextResult.Filtered;
             }
         }
 
