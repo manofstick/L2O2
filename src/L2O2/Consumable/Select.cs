@@ -13,22 +13,18 @@ namespace L2O2
 
         internal class SelectImpl<T, U> : SelectImpl<U>, ITransmutation<T, U>
         {
-            public SelectImpl(Func<T, U> selector)
-            {
+            public SelectImpl(Func<T, U> selector) => 
                 this.Selector = selector;
-            }
 
             public Func<T, U> Selector { get; }
 
-            public override Consumable<V> AddSelector<V>(Consumable<U> consumer, Func<U, V> u2v)
-            {
-                return consumer.ReplaceTail(new SelectImpl<T, U, V>(Selector, u2v));
-            }
+            public override Consumable<V> AddSelector<V>(Consumable<U> consumer, Func<U, V> u2v) =>
+                consumer.ReplaceTail(new SelectImpl<T, U, V>(Selector, u2v));
 
-            public Chain<T, V> Compose<V>(Chain<U, V> activity)
-            {
-                return new Activity<V>(Selector, activity);
-            }
+            public Chain<T, V> Compose<V>(Chain<U, V> activity) =>
+                new Activity<V>(Selector, activity);
+
+            public bool TryOwn() => true;
 
             public ProcessNextResult OwnedProcessNext(T t, out U u)
             {
@@ -36,20 +32,12 @@ namespace L2O2
                 return ProcessNextResult.OK;
             }
 
-            public bool TryOwn()
-            {
-                return true;
-            }
-
             sealed class Activity<V> : Activity<T, U, V>
             {
                 private readonly Func<T, U> selector;
 
-                public Activity(Func<T, U> selector, Chain<U, V> next)
-                    : base(next)
-                {
+                public Activity(Func<T, U> selector, Chain<U, V> next) : base(next) =>
                     this.selector = selector;
-                }
 
                 public override ProcessNextResult ProcessNext(T input) => 
                     next.ProcessNext(selector(input));
@@ -61,17 +49,11 @@ namespace L2O2
             private readonly Func<T, U> t2u;
             private readonly Func<U, V> u2v;
 
-            public SelectImpl(Func<T, U> t2u, Func<U, V> u2v)
-                : base (t => u2v(t2u(t)))
-            {
-                this.t2u = t2u;
-                this.u2v = u2v;
-            }
+            public SelectImpl(Func<T, U> t2u, Func<U, V> u2v) : base(t => u2v(t2u(t))) =>
+                (this.t2u, this.u2v) = (t2u, u2v);
 
-            public override Consumable<W> AddSelector<W>(Consumable<V> consumer, Func<V, W> v2w)
-            {
-                return consumer.ReplaceTail(new SelectImpl<T, U, V, W>(t2u, u2v, v2w));
-            }
+            public override Consumable<W> AddSelector<W>(Consumable<V> consumer, Func<V, W> v2w) =>
+                consumer.ReplaceTail(new SelectImpl<T, U, V, W>(t2u, u2v, v2w));
         }
 
         sealed class SelectImpl<T, U, V, W> : SelectImpl<T, W>
@@ -80,18 +62,11 @@ namespace L2O2
             private readonly Func<U, V> u2v;
             private readonly Func<V, W> v2w;
 
-            public SelectImpl(Func<T, U> t2u, Func<U, V> u2v, Func<V, W> v2w)
-                : base(t => v2w(u2v(t2u(t))))
-            {
-                this.t2u = t2u;
-                this.u2v = u2v;
-                this.v2w = v2w;
-            }
+            public SelectImpl(Func<T, U> t2u, Func<U, V> u2v, Func<V, W> v2w) : base(t => v2w(u2v(t2u(t)))) =>
+                (this.t2u, this.u2v, this.v2w) = (t2u, u2v, v2w);
 
-            public override Consumable<X> AddSelector<X>(Consumable<W> consumer, Func<W, X> w2x)
-            {
-                return consumer.ReplaceTail(new SelectImpl<T, U, V, W, X>(t2u, u2v, v2w, w2x));
-            }
+            public override Consumable<X> AddSelector<X>(Consumable<W> consumer, Func<W, X> w2x) =>
+                consumer.ReplaceTail(new SelectImpl<T, U, V, W, X>(t2u, u2v, v2w, w2x));
         }
 
         sealed class SelectImpl<T, U, V, W, X> : SelectImpl<T, X>
@@ -101,10 +76,8 @@ namespace L2O2
             {}
         }
 
-        private static SelectImpl<TSource, TResult> CreateSelect<TSource, TResult>(Func<TSource, TResult> selector)
-        {
-            return new SelectImpl<TSource, TResult>(selector);
-        }
+        private static SelectImpl<TSource, TResult> CreateSelect<TSource, TResult>(Func<TSource, TResult> selector) =>
+            new SelectImpl<TSource, TResult>(selector);
 
         internal static Consumable<TResult> Select<TSource, TResult>(
             IEnumerable<TSource> source,
