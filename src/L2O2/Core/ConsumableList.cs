@@ -8,11 +8,11 @@ namespace L2O2.Core
     {
         private readonly List<T> list;
 
-        public ConsumableList(List<T> list, ITransmutation<T, U> first, ITransmutation<U, V> second)
-            : base(first, second)
-        {
+        public ConsumableList(List<T> list, ITransmutation<T, U> first, ITransmutation<U, V> second) : base(first, second) =>
             this.list = list;
-        }
+
+        public override Consumable<W> Create<VV, W>(ITransmutation<T, VV> first, ITransmutation<VV, W> second) =>
+            new ConsumableList<T, VV, W>(list, first, second);
 
         public override IEnumerator<V> GetEnumerator()
         {
@@ -30,14 +30,6 @@ namespace L2O2.Core
             var f = t2v.Selector;
             foreach (var item in list)
                 yield return f(item);
-        }
-
-        public override Consumable<W> AddTail<W>(ITransmutation<V, W> next)
-        {
-            if (ReferenceEquals(first, IdentityTransform<T>.Instance))
-                return new ConsumableList<T, V, W>(list, (ITransmutation<T, V>)second, next);
-
-            return new ConsumableList<T, V, W>(list, new CompositionTransform<T, U, V>(first, second), next);
         }
 
         public override Result Consume<Result>(Consumer<V, Result> consumer)
@@ -105,11 +97,6 @@ namespace L2O2.Core
                 activity.ChainDispose();
             }
             return consumer.Result;
-        }
-
-        public override Consumable<W> ReplaceTail<U_alias, W>(ITransmutation<U_alias, W> selectImpl)
-        {
-            return new ConsumableList<T, U, W>(list, first, (ITransmutation<U, W>)selectImpl);
         }
     }
 }

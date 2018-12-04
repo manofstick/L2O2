@@ -2,7 +2,12 @@
 
 namespace L2O2.Core
 {
-    internal abstract class ConsumableWithComposition<T, U, V> : Consumable<V>, ITransmutation<T, V>
+    internal interface IConsumableWithCompositionConstruct<T>
+    {
+        Consumable<V> Create<U, V>(ITransmutation<T, U> first, ITransmutation<U, V> second);
+    }
+
+    internal abstract class ConsumableWithComposition<T, U, V> : Consumable<V>, ITransmutation<T, V>, IConsumableWithCompositionConstruct<T>
     {
         protected readonly ITransmutation<T, U> first;
         protected readonly ITransmutation<U, V> second;
@@ -41,5 +46,21 @@ namespace L2O2.Core
         {
             return first.Compose(second.Compose(next));
         }
+
+        public override Consumable<W> AddTail<W>(ITransmutation<V, W> next)
+        {
+            if (ReferenceEquals(first, IdentityTransform<T>.Instance))
+                return Create((ITransmutation<T, V>)second, next);
+
+            return Create(new CompositionTransform<T, U, V>(first, second), next);
+        }
+
+        public override Consumable<W> ReplaceTail<U_alias, W>(ITransmutation<U_alias, W> selectImpl)
+        {
+            System.Diagnostics.Debug.Assert(typeof(U) == typeof(U_alias));
+            return Create(first, (ITransmutation<U, W>)selectImpl);
+        }
+
+        public abstract Consumable<W> Create<VV, W>(ITransmutation<T, VV> first, ITransmutation<VV, W> second);
     }
 }

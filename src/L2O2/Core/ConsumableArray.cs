@@ -7,11 +7,11 @@ namespace L2O2.Core
     {
         private readonly T[] array;
 
-        public ConsumableArray(T[] array, ITransmutation<T, U> first, ITransmutation<U, V> second)
-            : base(first, second)
-        {
+        public ConsumableArray(T[] array, ITransmutation<T, U> first, ITransmutation<U, V> second) : base(first, second) =>
             this.array = array;
-        }
+
+        public override Consumable<W> Create<VV, W>(ITransmutation<T, VV> first, ITransmutation<VV, W> second) =>
+            new ConsumableArray<T, VV, W>(array, first, second);
 
         public override IEnumerator<V> GetEnumerator()
         {
@@ -32,14 +32,6 @@ namespace L2O2.Core
             var f = t2v.Selector;
             foreach (var item in array)
                 yield return f(item);
-        }
-
-        public override Consumable<W> AddTail<W>(ITransmutation<V, W> next)
-        {
-            if (ReferenceEquals(first, IdentityTransform<T>.Instance))
-                return new ConsumableArray<T, V, W>(array, (ITransmutation<T, V>)second, next);
-
-            return new ConsumableArray<T, V, W>(array, new CompositionTransform<T, U, V>(first, second), next);
         }
 
         public override Result Consume<Result>(Consumer<V, Result> consumer)
@@ -108,10 +100,5 @@ namespace L2O2.Core
             return consumer.Result;
         }
 
-        public override Consumable<W> ReplaceTail<U_alias, W>(ITransmutation<U_alias, W> selectImpl)
-        {
-            System.Diagnostics.Debug.Assert(typeof(U) == typeof(U_alias));
-            return new ConsumableArray<T, U, W>(array, first, (ITransmutation<U,W>)selectImpl);
-        }
     }
 }
