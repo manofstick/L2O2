@@ -29,7 +29,7 @@ namespace L2O2
                     this.predicate = predicate;
 
                 public override ProcessNextResult ProcessNext(T input) =>
-                    predicate(input) ? Next(input) : ProcessNextResult.Filtered;
+                    predicate(input) ? Next(input) : Filtered;
             }
         }
 

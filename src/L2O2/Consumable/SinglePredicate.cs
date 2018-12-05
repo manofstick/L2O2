@@ -29,7 +29,7 @@ namespace L2O2
                     Result = input;
                 }
 
-                return ProcessNextResult.OK;
+                return OK;
             }
 
             public override void ChainComplete()

@@ -15,7 +15,7 @@ namespace L2O2.Core
         public override ProcessNextResult ProcessNext(T input)
         {
             Result = input;
-            return ProcessNextResult.OK;
+            return OK;
         }
 
         public virtual T Current => Result;

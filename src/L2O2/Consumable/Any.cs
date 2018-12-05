@@ -21,9 +21,9 @@ namespace L2O2
                 if (selector(input))
                 {
                     Result = true;
-                    return ProcessNextResult.HaltedConsumer;
+                    return Halted;
                 }
-                return ProcessNextResult.OK;
+                return OK;
             }
         }
 
