@@ -57,6 +57,20 @@ namespace L2O2.Core
             return ConsumableEnumerableEnumerator<T, V>.Create(e, composition.Composed);
         }
 
+        public static IEnumerator<V> GetEnumerator<T, U, V>(Consumable<IEnumerable<T>> e, IComposition<T, U, V> composition)
+        {
+            if (ReferenceEquals(composition.First, IdentityTransform<T>.Instance))
+            {
+                switch (composition.Second)
+                {
+                    case SelectImpl<T, V> select: return GetEnumerator(e, select.Selector);
+                    case WhereImpl<T> where: return (IEnumerator<V>)GetEnumerator(e, where.Predicate);
+                }
+            }
+
+            return SelectMany(e, composition.Composed);
+        }
+
         class SetResultConsumer<T> : Consumer<T, T>
         {
             public SetResultConsumer() : base(default(T)) { }
@@ -82,6 +96,23 @@ namespace L2O2.Core
             }
         }
 
+        private static IEnumerator<V> SelectMany<T, V>(Consumable<IEnumerable<T>> selectMany, ITransmutation<T, V> composed)
+        {
+            var consumer = new SetResultConsumer<V>();
+            var activity = composed.Compose(consumer);
+            foreach (var e in selectMany)
+            {
+                foreach (var item in e)
+                {
+                    var rc = activity.ProcessNext(item);
+                    if (rc.IsOK())
+                        yield return consumer.Result;
+                    else if (rc.IsHalted())
+                        break;
+                }
+            }
+        }
+
         private static IEnumerator<V> GetEnumerator<T, V>(T[] array, Func<T, V> selector)
         {
             foreach (var item in array)
@@ -98,6 +129,13 @@ namespace L2O2.Core
         {
             foreach (var item in e)
                 yield return selector(item);
+        }
+
+        private static IEnumerator<V> GetEnumerator<T, V>(Consumable<IEnumerable<T>> ce, Func<T, V> selector)
+        {
+            foreach (var e in ce)
+                foreach (var item in e)
+                    yield return selector(item);
         }
 
 
@@ -121,6 +159,14 @@ namespace L2O2.Core
             foreach (var item in e)
                 if (predicate(item))
                     yield return item;
+        }
+
+        private static IEnumerator<T> GetEnumerator<T>(Consumable<IEnumerable<T>> ce, Func<T, bool> predicate)
+        {
+            foreach (var e in ce)
+                foreach (var item in e)
+                    if (predicate(item))
+                        yield return item;
         }
     }
 }

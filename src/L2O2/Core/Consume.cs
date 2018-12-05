@@ -44,6 +44,65 @@ namespace L2O2.Core
             return consumer.Result;
         }
 
+        class SelectManyInnerConsumer<T> : Consumer<T, ProcessNextResult>
+        {
+            private readonly Chain<T> chainT;
+
+            public SelectManyInnerConsumer(Chain<T> chainT) : base(ProcessNextResult.OK) =>
+                this.chainT = chainT;
+
+            public override ProcessNextResult ProcessNext(T input)
+            {
+                var rc = chainT.ProcessNext(input);
+                Result = rc;
+                return rc;
+            }
+        }
+
+        class SelectManyOuterConsumer<T> : Consumer<IEnumerable<T>, ChainEnd>
+        {
+            private readonly Chain<T> chainT;
+            private SelectManyInnerConsumer<T> inner;
+
+            private SelectManyInnerConsumer<T> GetInnerConsumer()
+            {
+                if (inner == null)
+                    inner = new SelectManyInnerConsumer<T>(chainT);
+                return inner;
+            }
+
+            public SelectManyOuterConsumer(Chain<T> chainT) : base(default(ChainEnd)) =>
+                this.chainT = chainT;
+
+            public override ProcessNextResult ProcessNext(IEnumerable<T> input)
+            {
+                var rc = ProcessNextResult.OK;
+                switch (input)
+                {
+                    case Consumable<T> consumable:
+                        rc = consumable.Consume(GetInnerConsumer());
+                        break;
+
+                    default:
+                        foreach (var item in input)
+                        {
+                            rc = chainT.ProcessNext(item);
+                            if (rc.IsHalted())
+                                break;
+
+                        }
+                        break;
+                }
+                return rc == ProcessNextResult.HaltedConsumer ? ProcessNextResult.HaltedConsumer : ProcessNextResult.OK;
+            }
+        }
+
+        public static Result Consume<T, U, V, Result>(Consumable<IEnumerable<T>> e, IComposition<T, U, V> composition, Consumer<V, Result> consumer)
+        {
+            e.Consume(new SelectManyOuterConsumer<T>(composition.Composed.Compose(consumer)));
+            return consumer.Result;
+        }
+
         private static void Empty(Chain consumer)
         {
             try { consumer.ChainComplete(); }

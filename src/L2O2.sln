@@ -9,9 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "L2O2.Tests", "L2O2.Tests\L2
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "L2O2.TestSupport", "L2O2.TestSupport\L2O2.TestSupport.csproj", "{D65D18BF-F29D-41F6-A77A-48746F896AC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L202.Perf", "L202.Perf\L202.Perf.csproj", "{A85A0C6F-C15C-4985-8AA1-DE6EC96B2C65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "L202.Perf", "L202.Perf\L202.Perf.csproj", "{A85A0C6F-C15C-4985-8AA1-DE6EC96B2C65}"
 EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
