@@ -13,6 +13,6 @@ namespace L2O2.Core
         public abstract Result Consume<Result>(Consumer<T, Result> consumer);
         public abstract IEnumerator<T> GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

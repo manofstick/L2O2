@@ -6,20 +6,22 @@ namespace L2O2
 {
     public static partial class Consumable
     {
-        sealed class WhereImpl<T> : ITransmutation<T, T>
+        internal class WhereImpl<T> : ITransmutation<T, T>
         {
-            internal readonly Func<T, bool> predicate;
+            private readonly Func<T, bool> predicate;
+
+            internal Func<T, bool> Predicate => predicate;
 
             public WhereImpl(Func<T, bool> predicate) =>
                 this.predicate = predicate;
 
             public Chain<T, U> Compose<U>(Chain<T, U> activity) =>
-                new Activity<U>(predicate, activity);
+                new Activity<U>(Predicate, activity);
 
             public bool TryOwn() => true;
 
             public ProcessNextResult OwnedProcessNext(T tin, out T tout) =>
-                predicate(tout = tin) ? ProcessNextResult.OK :  ProcessNextResult.Filtered;
+                Predicate(tout = tin) ? ProcessNextResult.OK :  ProcessNextResult.Filtered;
 
             sealed class Activity<U> : Activity<T, T, U>
             {
