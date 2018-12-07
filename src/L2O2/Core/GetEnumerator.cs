@@ -71,6 +71,11 @@ namespace L2O2.Core
             return SelectMany(e, composition.Composed);
         }
 
+        public static IEnumerator<V> GetEnumerator<TSource, TCollection, T, U, V>(Consumable<(TSource, IEnumerable<TCollection>)> e, Func<TSource, TCollection, T> resultSelector, IComposition<T, U, V> composition)
+        {
+            return SelectMany(e, resultSelector, composition.Composed);
+        }
+
         class SetResultConsumer<T> : Consumer<T, T>
         {
             public SetResultConsumer() : base(default(T)) { }
@@ -105,6 +110,23 @@ namespace L2O2.Core
                 foreach (var item in e)
                 {
                     var rc = activity.ProcessNext(item);
+                    if (rc.IsOK())
+                        yield return consumer.Result;
+                    else if (rc.IsHalted())
+                        break;
+                }
+            }
+        }
+
+        private static IEnumerator<V> SelectMany<TSource, TCollection, T, V>(Consumable<(TSource, IEnumerable<TCollection>)> selectMany, Func<TSource, TCollection, T> resultSelector, ITransmutation<T, V> composed)
+        {
+            var consumer = new SetResultConsumer<V>();
+            var activity = composed.Compose(consumer);
+            foreach (var (source, items) in selectMany)
+            {
+                foreach (var item in items)
+                {
+                    var rc = activity.ProcessNext(resultSelector(source, item));
                     if (rc.IsOK())
                         yield return consumer.Result;
                     else if (rc.IsHalted())

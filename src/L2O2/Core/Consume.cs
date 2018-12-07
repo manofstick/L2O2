@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace L2O2.Core
 {
@@ -100,6 +101,71 @@ namespace L2O2.Core
         public static Result Consume<T, U, V, Result>(Consumable<IEnumerable<T>> e, IComposition<T, U, V> composition, Consumer<V, Result> consumer)
         {
             e.Consume(new SelectManyOuterConsumer<T>(composition.Composed.Compose(consumer)));
+            return consumer.Result;
+        }
+
+        class SelectManyInnerConsumer<TSource, TCollection, T> : Consumer<TCollection, ProcessNextResult>
+        {
+            private readonly Chain<T> chainT;
+            private readonly Func<TSource, TCollection, T> resultSelector;
+
+            public TSource Source { get; set; }
+
+            public SelectManyInnerConsumer(Func<TSource, TCollection, T> resultSelector, Chain<T> chainT) : base(ProcessNextResult.OK) =>
+                (this.chainT, this.resultSelector) = (chainT, resultSelector);
+
+            public override ProcessNextResult ProcessNext(TCollection input)
+            {
+                var rc = chainT.ProcessNext(resultSelector(Source, input));
+                Result = rc;
+                return rc;
+            }
+        }
+
+        class SelectManyOuterConsumer<TSource, TCollection, T> : Consumer<(TSource, IEnumerable<TCollection>), ChainEnd>
+        {
+            Func<TSource, TCollection, T> resultSelector;
+            private readonly Chain<T> chainT;
+            private SelectManyInnerConsumer<TSource, TCollection, T> inner;
+
+            private SelectManyInnerConsumer<TSource, TCollection, T> GetInnerConsumer()
+            {
+                if (inner == null)
+                    inner = new SelectManyInnerConsumer<TSource, TCollection, T>(resultSelector, chainT);
+                return inner;
+            }
+
+            public SelectManyOuterConsumer(Func<TSource, TCollection, T> resultSelector, Chain<T> chainT) : base(default(ChainEnd)) =>
+                (this.chainT, this.resultSelector) = (chainT, resultSelector);
+
+            public override ProcessNextResult ProcessNext((TSource, IEnumerable<TCollection>) input)
+            {
+                var rc = ProcessNextResult.OK;
+                switch (input.Item2)
+                {
+                    case Consumable<TCollection> consumable:
+                        var consumer = GetInnerConsumer();
+                        consumer.Source = input.Item1;
+                        rc = consumable.Consume(consumer);
+                        break;
+
+                    default:
+                        foreach (var item in input.Item2)
+                        {
+                            rc = chainT.ProcessNext(resultSelector(input.Item1, item));
+                            if (rc.IsHalted())
+                                break;
+
+                        }
+                        break;
+                }
+                return rc == ProcessNextResult.HaltedConsumer ? ProcessNextResult.HaltedConsumer : ProcessNextResult.OK;
+            }
+        }
+
+        public static Result Consume<TSource, TCollection, T, U, V, Result>(Consumable<(TSource, IEnumerable<TCollection>)> e, Func<TSource, TCollection, T> resultSelector, IComposition<T, U, V> composition, Consumer<V, Result> consumer)
+        {
+            e.Consume(new SelectManyOuterConsumer<TSource, TCollection, T>(resultSelector, composition.Composed.Compose(consumer)));
             return consumer.Result;
         }
 

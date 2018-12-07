@@ -86,6 +86,19 @@ namespace L2O2.Tests
             query.AssertSequenceEqual("5:tiger", "3:bee", "3:cat", "3:dog", "4:null", "7:giraffe");
         }
 
+        [Test]
+        public void GroupJoinWithDefaultIfEmptyAndSelectMany_ConsumeViaToList()
+        {
+            int[] outer = { 5, 3, 4, 7 };
+            string[] inner = { "bee", "giraffe", "tiger", "badger", "ox", "cat", "dog" };
+
+            var query = from x in outer
+                        join y in inner on x equals y.Length into matches
+                        from z in matches.DefaultIfEmpty("null")
+                        select x + ":" + z;
+            query.ToList().AssertSequenceEqual("5:tiger", "3:bee", "3:cat", "3:dog", "4:null", "7:giraffe");
+        }
+
         // Equivalent to GroupByTest.GroupByWithElementProjection
         [Test]
         public void GroupBy()

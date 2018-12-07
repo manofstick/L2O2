@@ -41,38 +41,63 @@ namespace L2O2
             return new ConsumableSelectMany<TResult, TResult, TResult>(Consumable.Select(source, selector), IdentityTransform<TResult>.Instance, IdentityTransform<TResult>.Instance);
         }
 
+        internal class SelectManyImpl<T, U> : Transmutation<T, (T, IEnumerable<U>)>
+        {
+            private readonly Func<T, IEnumerable<U>> collectionSelector;
+
+            public SelectManyImpl(Func<T, IEnumerable<U>> collectionSelector) =>
+                this.collectionSelector = collectionSelector;
+
+            public override Chain<T, V> Compose<V>(Chain<(T, IEnumerable<U>), V> next) =>
+                new Activity<V>(next, collectionSelector);
+
+            private class Activity<V> : Activity<T, (T, IEnumerable<U>), V>
+            {
+                private readonly Func<T, IEnumerable<U>> collectionSelector;
+
+                public Activity(Chain<(T, IEnumerable<U>)> next, Func<T, IEnumerable<U>> collectionSelector) : base(next) =>
+                    this.collectionSelector = collectionSelector;
+
+                public override ProcessNextResult ProcessNext(T input) =>
+                    Next((input, collectionSelector(input)));
+            }
+        }
+
+        internal class SelectManyIndexedImpl<T, U> : Transmutation<T, (T, IEnumerable<U>)>
+        {
+            private readonly Func<T, int, IEnumerable<U>> collectionSelector;
+
+            public SelectManyIndexedImpl(Func<T, int, IEnumerable<U>> collectionSelector) =>
+                this.collectionSelector = collectionSelector;
+
+            public override Chain<T, V> Compose<V>(Chain<(T, IEnumerable<U>), V> next) =>
+                new Activity<V>(next, collectionSelector);
+
+            private class Activity<V> : Activity<T, (T, IEnumerable<U>), V>
+            {
+                private readonly Func<T, int, IEnumerable<U>> collectionSelector;
+                private int index = 0;
+
+                public Activity(Chain<(T, IEnumerable<U>)> next, Func<T, int, IEnumerable<U>> collectionSelector) : base(next) =>
+                    this.collectionSelector = collectionSelector;
+
+                public override ProcessNextResult ProcessNext(T input) =>
+                    Next((input, collectionSelector(input, index++)));
+            }
+        }
+
         public static IEnumerable<TResult> SelectMany<TSource, TCollection, TResult>(
             this IEnumerable<TSource> source,
             Func<TSource, IEnumerable<TCollection>> collectionSelector,
             Func<TSource, TCollection, TResult> resultSelector)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
-            if (collectionSelector == null)
-            {
-                throw new ArgumentNullException("collectionSelector");
-            }
-            if (resultSelector == null)
-            {
-                throw new ArgumentNullException("resultSelector");
-            }
-            return SelectManyImpl(source, collectionSelector, resultSelector);
-        }
+            if (source == null) { throw new ArgumentNullException("source"); }
+            if (collectionSelector == null) { throw new ArgumentNullException("collectionSelector"); }
+            if (resultSelector == null) { throw new ArgumentNullException("resultSelector"); }
 
-        private static IEnumerable<TResult> SelectManyImpl<TSource, TCollection, TResult>(
-            IEnumerable<TSource> source,
-            Func<TSource, IEnumerable<TCollection>> collectionSelector,
-            Func<TSource, TCollection, TResult> resultSelector)
-        {
-            foreach (TSource item in source)
-            {
-                foreach (TCollection collectionItem in collectionSelector(item))
-                {
-                    yield return resultSelector(item, collectionItem);
-                }
-            }
+            var selectMany = Utils.PushTransform(source, new SelectManyImpl<TSource, TCollection>(collectionSelector));
+
+            return new ConsumableSelectMany<TSource, TCollection, TResult, TResult, TResult>(selectMany, resultSelector, IdentityTransform<TResult>.Instance, IdentityTransform<TResult>.Instance);
         }
 
         public static IEnumerable<TResult> SelectMany<TSource, TCollection, TResult>(
@@ -80,34 +105,10 @@ namespace L2O2
             Func<TSource, int, IEnumerable<TCollection>> collectionSelector,
             Func<TSource, TCollection, TResult> resultSelector)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
-            if (collectionSelector == null)
-            {
-                throw new ArgumentNullException("collectionSelector");
-            }
-            if (resultSelector == null)
-            {
-                throw new ArgumentNullException("resultSelector");
-            }
-            return SelectManyImpl(source, collectionSelector, resultSelector);
+            var selectMany = Utils.PushTransform(source, new SelectManyIndexedImpl<TSource, TCollection>(collectionSelector));
+
+            return new ConsumableSelectMany<TSource, TCollection, TResult, TResult, TResult>(selectMany, resultSelector, IdentityTransform<TResult>.Instance, IdentityTransform<TResult>.Instance);
         }
 
-        private static IEnumerable<TResult> SelectManyImpl<TSource, TCollection, TResult>(
-            IEnumerable<TSource> source,
-            Func<TSource, int, IEnumerable<TCollection>> collectionSelector,
-            Func<TSource, TCollection, TResult> resultSelector)
-        {
-            int index = 0;
-            foreach (TSource item in source)
-            {
-                foreach (TCollection collectionItem in collectionSelector(item, index++))
-                {
-                    yield return resultSelector(item, collectionItem);
-                }
-            }
-        }
     }
 }
