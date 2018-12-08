@@ -26,9 +26,9 @@ namespace L2O2
             public Chain<T, V> Compose<V>(Chain<U, V> activity) =>
                 new Activity<V>(t2u, activity);
 
-            public bool TryOwn() => true;
+            public bool IsStateless() => true;
 
-            public ProcessNextResult OwnedProcessNext(T t, out U u)
+            public ProcessNextResult ProcessNextStateless(T t, out U u)
             {
                 u = Selector(t);
                 return ProcessNextResult.OK;

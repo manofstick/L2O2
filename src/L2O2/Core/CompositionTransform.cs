@@ -17,14 +17,14 @@
         public Chain<T, W> Compose<W>(Chain<V, W> next) =>
 		    first.Compose(second.Compose(next));
 
-        public bool TryOwn() =>
-            first.TryOwn() && second.TryOwn();
+        public bool IsStateless() =>
+            first.IsStateless() && second.IsStateless();
 
-        public ProcessNextResult OwnedProcessNext(T t, out V v)
+        public ProcessNextResult ProcessNextStateless(T t, out V v)
         {
-            var processNextResult = first.OwnedProcessNext(t, out var u);
+            var processNextResult = first.ProcessNextStateless(t, out var u);
             if (processNextResult.IsOK())
-                return second.OwnedProcessNext(u, out v);
+                return second.ProcessNextStateless(u, out v);
 
             v = default(V);
             return processNextResult;

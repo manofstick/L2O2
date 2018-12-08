@@ -9,13 +9,13 @@
             return next;
         }
 
-        public ProcessNextResult OwnedProcessNext(T t, out T u)
+        public ProcessNextResult ProcessNextStateless(T t, out T u)
         {
             u = t;
             return ProcessNextResult.OK;
         }
 
-        public bool TryOwn()
+        public bool IsStateless()
         {
             return true;
         }

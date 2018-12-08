@@ -18,9 +18,9 @@ namespace L2O2
             public Chain<T, U> Compose<U>(Chain<T, U> activity) =>
                 new Activity<U>(Predicate, activity);
 
-            public bool TryOwn() => true;
+            public bool IsStateless() => true;
 
-            public ProcessNextResult OwnedProcessNext(T tin, out T tout) =>
+            public ProcessNextResult ProcessNextStateless(T tin, out T tout) =>
                 Predicate(tout = tin) ? ProcessNextResult.OK :  ProcessNextResult.Filtered;
 
             sealed class Activity<U> : Activity<T, T, U>

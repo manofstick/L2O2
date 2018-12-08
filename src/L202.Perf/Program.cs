@@ -110,9 +110,9 @@ namespace L202.Perf
 //                        data = __SELECTMANY__(data, x => __SELECT__(GetEnumerable(3), y => y+1));
 
                         //data = __SELECT__(data, x => x % 1000);
-                        //data = __WHEREI__(data, (x,ii) => x + ii > 5);
+                        data = __WHEREI__(data, (x,ii) => x + ii > 5);
                         //data = __DISTINCT__(data);
-                        data = __WHERE__(data, x => x != 42);
+//                        data = __WHERE__(data, x => x != 42);
                         //data = __SELECT__(data, x => x + 1);
                         //data = __SELECT__(data, x => x + 1);
                         //data = __SELECT__(data, x => x + 1);

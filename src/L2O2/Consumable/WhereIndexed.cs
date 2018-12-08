@@ -8,10 +8,6 @@ namespace L2O2
     {
         sealed class WhereIndexedImpl<T> : Transmutation<T, T>
         {
-            private readonly int initialThreadId = Environment.CurrentManagedThreadId;
-            private bool owned = false;
-            private int index = 0;
-
             internal readonly Func<T, int, bool> predicate;
 
             public WhereIndexedImpl(Func<T, int, bool> predicate) =>
@@ -19,19 +15,6 @@ namespace L2O2
 
             public override Chain<T, V> Compose<V>(Chain<T, V> activity) =>
                 new Activity<V>(predicate, activity);
-
-            public override bool TryOwn()
-            {
-                if (initialThreadId == Environment.CurrentManagedThreadId && !owned)
-                {
-                    owned = true;
-                    return true;
-                }
-                return false;
-            }
-
-            public override ProcessNextResult OwnedProcessNext(T tin, out T tout) =>
-                predicate(tout = tin, index++) ? ProcessNextResult.OK : ProcessNextResult.Filtered;
 
             sealed class Activity<V> : Activity<T, T, V>
             {

@@ -6,11 +6,11 @@ namespace L2O2.Core
     {
         public abstract Chain<T, V> Compose<V>(Chain<U, V> activity);
 
-        public virtual ProcessNextResult OwnedProcessNext(T t, out U u)
+        public virtual ProcessNextResult ProcessNextStateless(T t, out U u)
         {
             throw new NotImplementedException();
         }
 
-        public virtual bool TryOwn() => false;
+        public virtual bool IsStateless() => false;
     }
 }

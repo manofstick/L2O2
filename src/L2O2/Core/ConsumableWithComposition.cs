@@ -35,14 +35,14 @@ namespace L2O2.Core
                     : this;
         }
 
-        bool ITransmutation<T, V>.TryOwn() =>
-            first.TryOwn() && second.TryOwn();
+        bool ITransmutation<T, V>.IsStateless() =>
+            first.IsStateless() && second.IsStateless();
 
-        ProcessNextResult ITransmutation<T, V>.OwnedProcessNext(T t, out V v)
+        ProcessNextResult ITransmutation<T, V>.ProcessNextStateless(T t, out V v)
         {
-            var processNextResult = first.OwnedProcessNext(t, out var u);
+            var processNextResult = first.ProcessNextStateless(t, out var u);
             if (processNextResult.IsOK())
-                return second.OwnedProcessNext(u, out v);
+                return second.ProcessNextStateless(u, out v);
 
             v = default(V);
             return processNextResult;

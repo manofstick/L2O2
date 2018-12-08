@@ -14,7 +14,7 @@ namespace L2O2.Core
                 var transform = composition.Composed;
 
                 const int MaxLengthToAvoidPipelineCreationCost = 5;
-                if (array.Length <= MaxLengthToAvoidPipelineCreationCost && transform.TryOwn())
+                if (array.Length <= MaxLengthToAvoidPipelineCreationCost && transform.IsStateless())
                     Owned(array, transform, consumer);
                 else
                     Pipeline(array, composition.Composed.Compose(consumer));
@@ -31,7 +31,7 @@ namespace L2O2.Core
                 var transform = composition.Composed;
 
                 const int MaxLengthToAvoidPipelineCreationCost = 5;
-                if (lst.Count <= MaxLengthToAvoidPipelineCreationCost && transform.TryOwn())
+                if (lst.Count <= MaxLengthToAvoidPipelineCreationCost && transform.IsStateless())
                     Owned(lst, transform, consumer);
                 else
                     Pipeline(lst, composition.Composed.Compose(consumer));
@@ -181,7 +181,7 @@ namespace L2O2.Core
             {
                 foreach (var item in array)
                 {
-                    var processNextResult = transform.OwnedProcessNext(item, out var u);
+                    var processNextResult = transform.ProcessNextStateless(item, out var u);
                     if (processNextResult.IsOK())
                         processNextResult = finalLink.ProcessNext(u);
 
@@ -202,7 +202,7 @@ namespace L2O2.Core
             {
                 foreach (var item in lst)
                 {
-                    var processNextResult = transform.OwnedProcessNext(item, out var u);
+                    var processNextResult = transform.ProcessNextStateless(item, out var u);
                     if (processNextResult.IsOK())
                         processNextResult = finalLink.ProcessNext(u);
 
