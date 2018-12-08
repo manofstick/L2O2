@@ -141,7 +141,7 @@ namespace L2O2.Core
                 yield return selector(item);
         }
 
-        private static IEnumerator<V> GetEnumerator<T, V>(List<T> lst, Func<T, V> selector)
+        internal static IEnumerator<V> GetEnumerator<T, V>(List<T> lst, Func<T, V> selector)
         {
             foreach (var item in lst)
                 yield return selector(item);

@@ -17,5 +17,8 @@ namespace L2O2.Core
 
         public override TResult Consume<TResult>(Consumer<V, TResult> consumer) =>
             Impl.Consume(enumerable, this, consumer);
+
+        public override List<V> ToList() =>
+            Impl.ToList(this, enumerable, this);
     }
 }
