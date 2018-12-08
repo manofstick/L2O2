@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
 using System.Collections.Generic;
 
 namespace L2O2
@@ -22,13 +21,7 @@ namespace L2O2
     {
         public static List<TSource> ToList<TSource>(this IEnumerable<TSource> source)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
-            // The List<T> constructor optimizes for ICollection<T>.
-            // That's undocumented, of course... but at least we have a unit test.
-            return new List<TSource>(source);
+            return Consumable.ToList(source);
         }
     }
 }
