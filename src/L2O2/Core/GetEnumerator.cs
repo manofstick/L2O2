@@ -21,7 +21,7 @@ namespace L2O2.Core
             }
 
             if (array.Rank == 1 && array.GetLowerBound(0) == 0 && array.GetUpperBound(0) < int.MaxValue)
-                 return ConsumableArrayEnumerator<T, V>.Create(array, composition.Composed);
+                 return new ConsumableArrayEnumerator<T, V>(array, composition.Composed);
 
             return NonStandardArray(array, composition.Composed);
         }
@@ -40,7 +40,7 @@ namespace L2O2.Core
                 }
             }
 
-            return ConsumableListEnumerator<T, V>.Create(lst, composition.Composed);
+            return new ConsumableListEnumerator<T, V>(lst, composition.Composed);
         }
 
         public static IEnumerator<V> GetEnumerator<T, U, V>(IEnumerable<T> e, IComposition<T, U, V> composition)
@@ -54,7 +54,7 @@ namespace L2O2.Core
                 }
             }
 
-            return ConsumableEnumerableEnumerator<T, V>.Create(e, composition.Composed);
+            return new ConsumableEnumerableEnumerator<T, V>(e, composition.Composed);
         }
 
         public static IEnumerator<V> GetEnumerator<T, U, V>(Consumable<IEnumerable<T>> e, IComposition<T, U, V> composition)

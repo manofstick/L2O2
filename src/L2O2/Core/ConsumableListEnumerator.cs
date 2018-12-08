@@ -11,10 +11,10 @@ namespace L2O2.Core
 
         internal override Chain StartOfChain => activity;
 
-        private ConsumableListEnumerator(List<T> list)
+        public ConsumableListEnumerator(List<T> list, ITransmutation<T, TResult> factory)
         {
             this.list = list;
-            activity = null;
+            activity = factory.Compose(this);
         }
 
         public override void ChainDispose()
@@ -22,13 +22,6 @@ namespace L2O2.Core
             if (list == null)
                 enumerator.Dispose();
             list = null;
-        }
-
-        internal static IEnumerator<TResult> Create(List<T> list, ITransmutation<T, TResult> factory)
-        {
-            var listEnumerator = new ConsumableListEnumerator<T, TResult>(list);
-            listEnumerator.activity = factory.Compose(listEnumerator);
-            return listEnumerator;
         }
 
         public override bool MoveNext()

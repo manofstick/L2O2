@@ -10,23 +10,16 @@ namespace L2O2.Core
 
         internal override Chain StartOfChain => activity;
 
-        private ConsumableArrayEnumerator(T[] array)
+        public ConsumableArrayEnumerator(T[] array, ITransmutation<T, TResult> factory)
         {
             this.array = array;
-            activity = null;
+            activity = factory.Compose(this);
         }
 
         public override void ChainDispose()
         {
             array = null;
             activity = null;
-        }
-
-        internal static IEnumerator<TResult> Create(T[] array, ITransmutation<T, TResult> factory)
-        {
-            var arrayEnumerator = new ConsumableArrayEnumerator<T, TResult>(array);
-            arrayEnumerator.activity = factory.Compose(arrayEnumerator);
-            return arrayEnumerator;
         }
 
         public override bool MoveNext()
