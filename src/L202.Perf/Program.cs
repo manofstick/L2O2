@@ -32,7 +32,7 @@ namespace L202.Perf
         static void Main(string[] args)
         {
             //var library = Library.L2O2;
-            var dataStructure = DataStructure.Enumerable;
+            var dataStructure = DataStructure.Array;
             var function = Function.ToList;
             (
                 string __FUNCTIONS__,
@@ -47,7 +47,7 @@ namespace L202.Perf
                 Func<IEnumerable<int>, List<int>> __TOLIST__
 
             ) =
-#if true
+#if false
             (
                 "L2O2",
                 L2O2.Enumerable.Select,
@@ -109,10 +109,10 @@ namespace L202.Perf
 //                        data = __SELECTMANY__(data, x => __SELECT__(new[] { 1, 2, 3 }, y => y + 1));
 //                        data = __SELECTMANY__(data, x => __SELECT__(GetEnumerable(3), y => y+1));
 
-                        data = __SELECT__(data, x => x % 1000);
+                        //data = __SELECT__(data, x => x % 1000);
                         //data = __WHEREI__(data, (x,ii) => x + ii > 5);
                         //data = __DISTINCT__(data);
-                        //data = __WHERE__(data, x => x != 42);
+                        data = __WHERE__(data, x => x != 42);
                         //data = __SELECT__(data, x => x + 1);
                         //data = __SELECT__(data, x => x + 1);
                         //data = __SELECT__(data, x => x + 1);

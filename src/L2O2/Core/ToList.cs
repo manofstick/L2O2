@@ -14,18 +14,20 @@ namespace L2O2.Core
                 switch (composition.Second)
                 {
                     case SelectImpl<T, V> select: return ToList(array, select.Selector);
+                    case WhereImpl<V> where: return ToList((V[])(object)array, where.Predicate);
                 }
             }
             return consumable.Consume(new ToListImpl<V>());
         }
 
-        public static List<V> ToList<T, U, V>(Consumable<V> consumable, List<T> array, IComposition<T, U, V> composition)
+        public static List<V> ToList<T, U, V>(Consumable<V> consumable, List<T> list, IComposition<T, U, V> composition)
         {
             if (composition.First == IdentityTransform<T>.Instance)
             {
                 switch (composition.Second)
                 {
-                    case SelectImpl<T, V> select: return ToList(array, select.Selector);
+                    case SelectImpl<T, V> select: return ToList(list, select.Selector);
+                    case WhereImpl<V> where: return ToList((List<V>)(object)list, where.Predicate);
                 }
             }
             return consumable.Consume(new ToListImpl<V>());
@@ -38,6 +40,7 @@ namespace L2O2.Core
                 switch (composition.Second)
                 {
                     case SelectImpl<T, V> select: return ToList(enumerable, select.Selector);
+                    case WhereImpl<V> where: return ToList((IEnumerable<V>)enumerable, where.Predicate);
                 }
             }
             return consumable.Consume(new ToListImpl<V>());
@@ -78,7 +81,9 @@ namespace L2O2.Core
             override public void CopyTo(V[] array, int arrayIndex)
             {
                 for (var i = 0; i < array.Length; ++i)
+                {
                     array[arrayIndex + i] = selector(source[i]);
+                }
             }
 
             override public IEnumerator<V> GetEnumerator() => Impl.GetEnumerator(source, selector);
@@ -97,7 +102,9 @@ namespace L2O2.Core
             override public void CopyTo(V[] array, int arrayIndex)
             {
                 for (var i = 0; i < source.Count; ++i)
+                {
                     array[arrayIndex + i] = selector(source[i]);
+                }
             }
 
             override public IEnumerator<V> GetEnumerator() => Impl.GetEnumerator(source, selector);
@@ -107,14 +114,57 @@ namespace L2O2.Core
         {
             var l = new List<V>();
             foreach (var item in enumerable)
+            {
                 l.Add(selector(item));
+            }
+            return l;
+        }
+
+        static private List<T> ToList<T>(IEnumerable<T> enumerable, Func<T, bool> predicate)
+        {
+            var l = new List<T>();
+            foreach (var item in enumerable)
+            {
+                if (predicate(item))
+                {
+                    l.Add(item);
+                }
+            }
             return l;
         }
 
         static private List<V> ToList<T, V>(T[] array, Func<T, V> selector) =>
             new List<V>(new ArraySelectorToList<T, V>(array, selector));
 
+        static private List<T> ToList<T>(T[] array, Func<T, bool> predicate)
+        {
+            var l = new List<T>();
+            for (var i=0; i < array.Length; ++i)
+            {
+                var item = array[i];
+                if (predicate(item))
+                {
+                    l.Add(item);
+                }
+            }
+            return l;
+        }
+
         static private List<V> ToList<T, V>(List<T> list, Func<T, V> selector) =>
             new List<V>(new ListSelectorToList<T, V>(list, selector));
+
+        static private List<T> ToList<T>(List<T> list, Func<T, bool> predicate)
+        {
+            var l = new List<T>();
+            for (var i = 0; i < list.Count; ++i)
+            {
+                var item = list[i];
+                if (predicate(item))
+                {
+                    l.Add(item);
+                }
+            }
+            return l;
+        }
     }
 }
