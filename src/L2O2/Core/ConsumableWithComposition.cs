@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace L2O2.Core
 {
@@ -67,5 +68,7 @@ namespace L2O2.Core
         }
 
         public abstract Consumable<W> Create<VV, W>(ITransmutation<T, VV> first, ITransmutation<VV, W> second);
+
+        public override List<V> ToList() =>  Consume(new Consumable.ToListImpl<V>());
     }
 }

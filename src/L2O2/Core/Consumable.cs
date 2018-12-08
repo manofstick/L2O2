@@ -10,6 +10,8 @@ namespace L2O2.Core
         public abstract Consumable<V> ReplaceTail<U, V>(ITransmutation<U, V> selectImpl);
         public abstract Consumable<U> AddTail<U>(ITransmutation<T, U> transform);
 
+        public abstract List<T> ToList();
+
         public abstract Result Consume<Result>(Consumer<T, Result> consumer);
         public abstract IEnumerator<T> GetEnumerator();
 

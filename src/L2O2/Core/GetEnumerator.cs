@@ -135,7 +135,7 @@ namespace L2O2.Core
             }
         }
 
-        private static IEnumerator<V> GetEnumerator<T, V>(T[] array, Func<T, V> selector)
+        internal static IEnumerator<V> GetEnumerator<T, V>(T[] array, Func<T, V> selector)
         {
             foreach (var item in array)
                 yield return selector(item);
