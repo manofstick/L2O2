@@ -40,7 +40,7 @@ namespace L2O2.Core
                     return consumable.Consume(consumer);
 
                 default:
-                    return PushTransform(e, IdentityTransform<T>.Instance).Consume(consumer);
+                    return CreateConsumable(e, IdentityTransform<T>.Instance).Consume(consumer);
             }
         }
 
