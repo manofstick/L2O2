@@ -25,14 +25,14 @@ namespace L2O2.Core
         public override bool MoveNext()
         {
         tryAgain:
-            if (idx >= array.Length || processNextResult.IsStopped())
+            if (idx >= array.Length || state.IsStopped())
             {
                 activity.ChainComplete();
                 return false;
             }
 
-            processNextResult = activity.ProcessNext(array[idx++]);
-            if (!processNextResult.IsFlowing())
+            state = activity.ProcessNext(array[idx++]);
+            if (!state.IsFlowing())
                 goto tryAgain;
 
             return true;

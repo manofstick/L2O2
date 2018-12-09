@@ -40,12 +40,12 @@ namespace L2O2.Core
 
         ProcessNextResult ITransmutation<T, V>.ProcessNextStateless(T t, out V v)
         {
-            var processNextResult = first.ProcessNextStateless(t, out var u);
-            if (processNextResult.IsFlowing())
+            var state = first.ProcessNextStateless(t, out var u);
+            if (state.IsFlowing())
                 return second.ProcessNextStateless(u, out v);
 
             v = default(V);
-            return processNextResult;
+            return state;
         }
 
         Chain<T, W> ITransmutation<T, V>.Compose<W>(Chain<V, W> next) =>

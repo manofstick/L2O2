@@ -11,7 +11,6 @@ namespace L2O2.Core
         Consumer = 0x04,
 
         StoppedConsumer = Stop | Consumer,
-
     }
 
     static class ProcessNextResultHelper

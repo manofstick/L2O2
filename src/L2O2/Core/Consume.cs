@@ -54,9 +54,9 @@ namespace L2O2.Core
 
             public override ProcessNextResult ProcessNext(T input)
             {
-                var rc = chainT.ProcessNext(input);
-                Result = rc;
-                return rc;
+                var state = chainT.ProcessNext(input);
+                Result = state;
+                return state;
             }
         }
 
@@ -77,24 +77,24 @@ namespace L2O2.Core
 
             public override ProcessNextResult ProcessNext(IEnumerable<T> input)
             {
-                var rc = ProcessNextResult.Flow;
+                var state = ProcessNextResult.Flow;
                 switch (input)
                 {
                     case Consumable<T> consumable:
-                        rc = consumable.Consume(GetInnerConsumer());
+                        state = consumable.Consume(GetInnerConsumer());
                         break;
 
                     default:
                         foreach (var item in input)
                         {
-                            rc = chainT.ProcessNext(item);
-                            if (rc.IsStopped())
+                            state = chainT.ProcessNext(item);
+                            if (state.IsStopped())
                                 break;
 
                         }
                         break;
                 }
-                return rc == ProcessNextResult.StoppedConsumer ? ProcessNextResult.StoppedConsumer : ProcessNextResult.Flow;
+                return state == ProcessNextResult.StoppedConsumer ? ProcessNextResult.StoppedConsumer : ProcessNextResult.Flow;
             }
         }
 
@@ -116,9 +116,9 @@ namespace L2O2.Core
 
             public override ProcessNextResult ProcessNext(TCollection input)
             {
-                var rc = chainT.ProcessNext(resultSelector(Source, input));
-                Result = rc;
-                return rc;
+                var state = chainT.ProcessNext(resultSelector(Source, input));
+                Result = state;
+                return state;
             }
         }
 
@@ -140,26 +140,26 @@ namespace L2O2.Core
 
             public override ProcessNextResult ProcessNext((TSource, IEnumerable<TCollection>) input)
             {
-                var rc = ProcessNextResult.Flow;
+                var state = ProcessNextResult.Flow;
                 switch (input.Item2)
                 {
                     case Consumable<TCollection> consumable:
                         var consumer = GetInnerConsumer();
                         consumer.Source = input.Item1;
-                        rc = consumable.Consume(consumer);
+                        state = consumable.Consume(consumer);
                         break;
 
                     default:
                         foreach (var item in input.Item2)
                         {
-                            rc = chainT.ProcessNext(resultSelector(input.Item1, item));
-                            if (rc.IsStopped())
+                            state = chainT.ProcessNext(resultSelector(input.Item1, item));
+                            if (state.IsStopped())
                                 break;
 
                         }
                         break;
                 }
-                return rc == ProcessNextResult.StoppedConsumer ? ProcessNextResult.StoppedConsumer : ProcessNextResult.Flow;
+                return state == ProcessNextResult.StoppedConsumer ? ProcessNextResult.StoppedConsumer : ProcessNextResult.Flow;
             }
         }
 
@@ -181,11 +181,11 @@ namespace L2O2.Core
             {
                 foreach (var item in array)
                 {
-                    var processNextResult = transform.ProcessNextStateless(item, out var u);
-                    if (processNextResult.IsFlowing())
-                        processNextResult = finalLink.ProcessNext(u);
+                    var state = transform.ProcessNextStateless(item, out var u);
+                    if (state.IsFlowing())
+                        state = finalLink.ProcessNext(u);
 
-                    if (processNextResult.IsStopped())
+                    if (state.IsStopped())
                         break;
                 }
                 finalLink.ChainComplete();
@@ -202,11 +202,11 @@ namespace L2O2.Core
             {
                 foreach (var item in lst)
                 {
-                    var processNextResult = transform.ProcessNextStateless(item, out var u);
-                    if (processNextResult.IsFlowing())
-                        processNextResult = finalLink.ProcessNext(u);
+                    var state = transform.ProcessNextStateless(item, out var u);
+                    if (state.IsFlowing())
+                        state = finalLink.ProcessNext(u);
 
-                    if (processNextResult.IsStopped())
+                    if (state.IsStopped())
                         break;
                 }
                 finalLink.ChainComplete();
@@ -223,8 +223,8 @@ namespace L2O2.Core
             {
                 foreach (var item in array)
                 {
-                    var processNextResult = chain.ProcessNext(item);
-                    if (processNextResult.IsStopped())
+                    var state = chain.ProcessNext(item);
+                    if (state.IsStopped())
                         break;
                 }
                 chain.ChainComplete();
@@ -241,8 +241,8 @@ namespace L2O2.Core
             {
                 foreach (var item in lst)
                 {
-                    var processNextResult = chain.ProcessNext(item);
-                    if (processNextResult.IsStopped())
+                    var state = chain.ProcessNext(item);
+                    if (state.IsStopped())
                         break;
                 }
                 chain.ChainComplete();
@@ -259,8 +259,8 @@ namespace L2O2.Core
             {
                 foreach (var item in e)
                 {
-                    var processNextResult = chain.ProcessNext(item);
-                    if (processNextResult.IsStopped())
+                    var state = chain.ProcessNext(item);
+                    if (state.IsStopped())
                         break;
                 }
                 chain.ChainComplete();

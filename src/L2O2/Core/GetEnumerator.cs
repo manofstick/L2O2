@@ -93,10 +93,10 @@ namespace L2O2.Core
             var activity = composed.Compose(consumer);
             foreach (var item in array)
             {
-                var rc = activity.ProcessNext(item);
-                if (rc.IsFlowing())
+                var state = activity.ProcessNext(item);
+                if (state.IsFlowing())
                     yield return consumer.Result;
-                else if (rc.IsStopped())
+                if (state.IsStopped())
                     break;
             }
         }
@@ -109,10 +109,10 @@ namespace L2O2.Core
             {
                 foreach (var item in e)
                 {
-                    var rc = activity.ProcessNext(item);
-                    if (rc.IsFlowing())
+                    var state = activity.ProcessNext(item);
+                    if (state.IsFlowing())
                         yield return consumer.Result;
-                    else if (rc.IsStopped())
+                    if (state.IsStopped())
                         break;
                 }
             }
@@ -126,10 +126,10 @@ namespace L2O2.Core
             {
                 foreach (var item in items)
                 {
-                    var rc = activity.ProcessNext(resultSelector(source, item));
-                    if (rc.IsFlowing())
+                    var state = activity.ProcessNext(resultSelector(source, item));
+                    if (state.IsFlowing())
                         yield return consumer.Result;
-                    else if (rc.IsStopped())
+                    if (state.IsStopped())
                         break;
                 }
             }

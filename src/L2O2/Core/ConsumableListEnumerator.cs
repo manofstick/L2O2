@@ -33,14 +33,14 @@ namespace L2O2.Core
             }
 
         tryAgain:
-            if (!enumerator.MoveNext() || processNextResult.IsStopped())
+            if (!enumerator.MoveNext() || state.IsStopped())
             {
                 activity.ChainComplete();
                 return false;
             }
 
-            processNextResult = activity.ProcessNext(enumerator.Current);
-            if (!processNextResult.IsFlowing())
+            state = activity.ProcessNext(enumerator.Current);
+            if (!state.IsFlowing())
                 goto tryAgain;
 
             return true;
