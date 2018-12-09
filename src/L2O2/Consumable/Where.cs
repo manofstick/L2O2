@@ -21,7 +21,7 @@ namespace L2O2
             public bool IsStateless() => true;
 
             public ProcessNextResult ProcessNextStateless(T tin, out T tout) =>
-                Predicate(tout = tin) ? ProcessNextResult.OK :  ProcessNextResult.Filtered;
+                Predicate(tout = tin) ? ProcessNextResult.Flow :  ProcessNextResult.Filter;
 
             sealed class Activity<U> : Activity<T, T, U>
             {
@@ -31,7 +31,7 @@ namespace L2O2
                     this.predicate = predicate;
 
                 public override ProcessNextResult ProcessNext(T input) =>
-                    predicate(input) ? Next(input) : Filtered;
+                    predicate(input) ? Next(input) : Filter;
             }
         }
 

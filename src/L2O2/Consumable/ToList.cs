@@ -1,6 +1,5 @@
 ﻿using L2O2.Core;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace L2O2
@@ -14,7 +13,7 @@ namespace L2O2
             public override ProcessNextResult ProcessNext(T input)
             {
                 Result.Add(input);
-                return ProcessNextResult.OK;
+                return ProcessNextResult.Flow;
             }
         }
 

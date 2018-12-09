@@ -5,21 +5,24 @@ namespace L2O2.Core
     [Flags]
     enum ProcessNextResult
     {
-        OK             = 0x00,
+        Filter = 0x00,
+        Flow   = 0x01,
+        Stop   = 0x02,
+        Consumer = 0x04,
 
-        Filtered       = 0x02,
+        StoppedConsumer = Stop | Consumer,
 
-        Halted         = 0x80,
-        HaltedActivity = 0x81,
-        HaltedConsumer = 0x82,
     }
 
     static class ProcessNextResultHelper
     {
-        public static bool IsHalted(this ProcessNextResult result) =>
-            (result & ProcessNextResult.Halted) == ProcessNextResult.Halted;
+        public static bool IsStopped(this ProcessNextResult result) =>
+            (result & ProcessNextResult.Stop) == ProcessNextResult.Stop;
 
-        public static bool IsOK(this ProcessNextResult result) =>
-            result == ProcessNextResult.OK;
+        public static bool IsFlowing(this ProcessNextResult result) =>
+            (result & ProcessNextResult.Flow) == ProcessNextResult.Flow;
+
+        public static bool IsStoppedConsumer(this ProcessNextResult result) =>
+            (result & ProcessNextResult.StoppedConsumer) == ProcessNextResult.StoppedConsumer;
     }
 }

@@ -29,7 +29,7 @@ namespace L2O2
                     Result = input;
                 }
 
-                return OK;
+                return Flow;
             }
 
             public override void ChainComplete()

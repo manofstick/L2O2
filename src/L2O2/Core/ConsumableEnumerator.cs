@@ -6,7 +6,7 @@ namespace L2O2.Core
 {
     internal abstract class ConsumableEnumerator<T> : Consumer<T, T>, IEnumerator<T>
     {
-        protected ProcessNextResult processNextResult = ProcessNextResult.OK;
+        protected ProcessNextResult processNextResult = ProcessNextResult.Flow;
 
         protected ConsumableEnumerator() : base(default(T)) { }
 
@@ -15,7 +15,7 @@ namespace L2O2.Core
         public override ProcessNextResult ProcessNext(T input)
         {
             Result = input;
-            return OK;
+            return Flow;
         }
 
         public virtual T Current => Result;

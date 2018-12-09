@@ -31,7 +31,7 @@ namespace L2O2
             public ProcessNextResult ProcessNextStateless(T t, out U u)
             {
                 u = Selector(t);
-                return ProcessNextResult.OK;
+                return ProcessNextResult.Flow;
             }
 
             sealed class Activity<V> : Activity<T, U, V>

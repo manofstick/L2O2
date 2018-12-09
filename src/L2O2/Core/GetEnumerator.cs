@@ -83,7 +83,7 @@ namespace L2O2.Core
             public override ProcessNextResult ProcessNext(T input)
             {
                 Result = input;
-                return OK;
+                return Flow;
             }
         }
 
@@ -94,9 +94,9 @@ namespace L2O2.Core
             foreach (var item in array)
             {
                 var rc = activity.ProcessNext(item);
-                if (rc.IsOK())
+                if (rc.IsFlowing())
                     yield return consumer.Result;
-                else if (rc.IsHalted())
+                else if (rc.IsStopped())
                     break;
             }
         }
@@ -110,9 +110,9 @@ namespace L2O2.Core
                 foreach (var item in e)
                 {
                     var rc = activity.ProcessNext(item);
-                    if (rc.IsOK())
+                    if (rc.IsFlowing())
                         yield return consumer.Result;
-                    else if (rc.IsHalted())
+                    else if (rc.IsStopped())
                         break;
                 }
             }
@@ -127,9 +127,9 @@ namespace L2O2.Core
                 foreach (var item in items)
                 {
                     var rc = activity.ProcessNext(resultSelector(source, item));
-                    if (rc.IsOK())
+                    if (rc.IsFlowing())
                         yield return consumer.Result;
-                    else if (rc.IsHalted())
+                    else if (rc.IsStopped())
                         break;
                 }
             }

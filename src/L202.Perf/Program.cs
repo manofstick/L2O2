@@ -31,13 +31,23 @@ namespace L202.Perf
     {
         static void Main(string[] args)
         {
+            int[] ss = { 1, 2, 0 };
+            // If we try to move onto the third element, we'll die.
+            var query = L2O2.Enumerable.Select(ss, x => 10 / x);
+            var qq = L2O2.Enumerable.Take(query, 2);
+            foreach (var m in qq)
+                Console.WriteLine(m);
+
+
+
             //var library = Library.L2O2;
-            var dataStructure = DataStructure.Array;
-            var function = Function.ToList;
+            var dataStructure = DataStructure.Enumerable;
+            var function = Function.Foreach;
             (
                 string __FUNCTIONS__,
                 Func<IEnumerable<int>, Func<int, int>, IEnumerable<int>> __SELECT__,
                 Func<IEnumerable<int>, Func<int, int, int>, IEnumerable<int>> __SELECTI__,
+                Func<IEnumerable<int>, int, IEnumerable<int>> __TAKE__,
                 Func<IEnumerable<int>, Func<int, bool>, bool> __ALL__,
                 Func<IEnumerable<int>, Func<int, bool>, IEnumerable<int>> __WHERE__,
                 Func<IEnumerable<int>, Func<int, int, bool>, IEnumerable<int>> __WHEREI__,
@@ -52,6 +62,7 @@ namespace L202.Perf
                 "L2O2",
                 L2O2.Enumerable.Select,
                 L2O2.Enumerable.Select,
+                L2O2.Enumerable.Take,
                 L2O2.Enumerable.All,
                 L2O2.Enumerable.Where,
                 L2O2.Enumerable.Where,
@@ -65,6 +76,7 @@ namespace L202.Perf
                 "Linq",
                 System.Linq.Enumerable.Select,
                 System.Linq.Enumerable.Select,
+                System.Linq.Enumerable.Take,
                 System.Linq.Enumerable.All,
                 System.Linq.Enumerable.Where,
                 System.Linq.Enumerable.Where,
@@ -80,6 +92,7 @@ namespace L202.Perf
             {
                 var elements = (int)Math.Pow(2, orderIdx) - 1;
                 var iterations = 10000000 / (elements + 1);
+                //var iterations = 10;
 
                 Console.Write($"{elements}:");
 
@@ -106,20 +119,22 @@ namespace L202.Perf
                     {
                         var data = source;
 
-//                        data = __SELECTMANY__(data, x => __SELECT__(new[] { 1, 2, 3 }, y => y + 1));
-//                        data = __SELECTMANY__(data, x => __SELECT__(GetEnumerable(3), y => y+1));
+                        //data = __SELECTMANY__(data, x => __SELECT__(new[] { 1, 2, 3 }, y => y + 1));
+                        //data = __SELECTMANY__(data, x => __SELECT__(GetEnumerable(3), y => y+1));
 
                         //data = __SELECT__(data, x => x % 1000);
-                        data = __WHEREI__(data, (x,ii) => x + ii > 5);
+                        //data = __WHEREI__(data, (x,ii) => x + ii > 5);
                         //data = __DISTINCT__(data);
-//                        data = __WHERE__(data, x => x != 42);
+                        //                        data = __WHERE__(data, x => x != 42);
                         //data = __SELECT__(data, x => x + 1);
                         //data = __SELECT__(data, x => x + 1);
                         //data = __SELECT__(data, x => x + 1);
                         //data = __SELECT__(data, x => x + 1);
                         //data = __SELECT__(data, x => x + 1);
                         //data = __SELECT__(data, x => x + 1);
-                        //data = __SELECT__(data, x => x + 1);
+                        data = __SELECT__(data, x => x + 1);
+                        data = __TAKE__(data, elements * 3 / 2);
+
 
                         switch (function)
                         {
@@ -129,8 +144,13 @@ namespace L202.Perf
                                 break;
 
                             case Function.Foreach:
+                                //Console.WriteLine();
                                 foreach (var item in data)
+                                {
+                                    //Console.Write($"{item},");
                                     checksum += item;
+                                }
+                                //Console.WriteLine();
                                 break;
 
                             case Function.All:

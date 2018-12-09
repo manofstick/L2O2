@@ -31,7 +31,7 @@ namespace L2O2
                     Result = func(Result, input);
                 }
 
-                return OK;
+                return Flow;
             }
 
             public override void ChainComplete()
@@ -62,7 +62,7 @@ namespace L2O2
             {
                 this.accumulate = func(accumulate, input);
 
-                return OK;
+                return Flow;
             }
 
             public override void ChainComplete()

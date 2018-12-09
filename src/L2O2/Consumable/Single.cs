@@ -24,7 +24,7 @@ namespace L2O2
                 found = true;
                 Result = input;
 
-                return OK;
+                return Flow;
             }
 
             public override void ChainComplete()

@@ -41,7 +41,7 @@ namespace L2O2.Core
         ProcessNextResult ITransmutation<T, V>.ProcessNextStateless(T t, out V v)
         {
             var processNextResult = first.ProcessNextStateless(t, out var u);
-            if (processNextResult.IsOK())
+            if (processNextResult.IsFlowing())
                 return second.ProcessNextStateless(u, out v);
 
             v = default(V);

@@ -21,9 +21,9 @@ namespace L2O2
                 if (!selector(input))
                 {
                     Result = false;
-                    return Halted;
+                    return Stopped;
                 }
-                return OK;
+                return Flow;
             }
         }
 

@@ -10,8 +10,8 @@ namespace L2O2.Core
 
     abstract class Chain<T> : Chain
     {
-        protected const ProcessNextResult OK       = ProcessNextResult.OK;
-        protected const ProcessNextResult Filtered = ProcessNextResult.Filtered;
+        protected const ProcessNextResult Flow  = ProcessNextResult.Flow;
+        protected const ProcessNextResult Filter = ProcessNextResult.Filter;
 
         public abstract ProcessNextResult ProcessNext(T input);
     }
@@ -20,7 +20,7 @@ namespace L2O2.Core
 
     abstract class Activity<T, U, V> : Chain<T,V>
     {
-        protected const ProcessNextResult Halted = ProcessNextResult.HaltedActivity;
+        protected const ProcessNextResult Stop = ProcessNextResult.Stop;
 
         private readonly Chain<U> next;
 
@@ -38,7 +38,7 @@ namespace L2O2.Core
 
     abstract class Consumer<T, R> : Chain<T, ChainEnd>
     {
-        protected const ProcessNextResult Halted = ProcessNextResult.HaltedConsumer;
+        protected const ProcessNextResult Stopped = ProcessNextResult.StoppedConsumer;
 
         protected Consumer(R initalResult)
         {

@@ -12,7 +12,7 @@
         public ProcessNextResult ProcessNextStateless(T t, out T u)
         {
             u = t;
-            return ProcessNextResult.OK;
+            return ProcessNextResult.Flow;
         }
 
         public bool IsStateless()

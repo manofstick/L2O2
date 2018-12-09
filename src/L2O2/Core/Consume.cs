@@ -49,7 +49,7 @@ namespace L2O2.Core
         {
             private readonly Chain<T> chainT;
 
-            public SelectManyInnerConsumer(Chain<T> chainT) : base(ProcessNextResult.OK) =>
+            public SelectManyInnerConsumer(Chain<T> chainT) : base(ProcessNextResult.Flow) =>
                 this.chainT = chainT;
 
             public override ProcessNextResult ProcessNext(T input)
@@ -77,7 +77,7 @@ namespace L2O2.Core
 
             public override ProcessNextResult ProcessNext(IEnumerable<T> input)
             {
-                var rc = ProcessNextResult.OK;
+                var rc = ProcessNextResult.Flow;
                 switch (input)
                 {
                     case Consumable<T> consumable:
@@ -88,13 +88,13 @@ namespace L2O2.Core
                         foreach (var item in input)
                         {
                             rc = chainT.ProcessNext(item);
-                            if (rc.IsHalted())
+                            if (rc.IsStopped())
                                 break;
 
                         }
                         break;
                 }
-                return rc == ProcessNextResult.HaltedConsumer ? ProcessNextResult.HaltedConsumer : ProcessNextResult.OK;
+                return rc == ProcessNextResult.StoppedConsumer ? ProcessNextResult.StoppedConsumer : ProcessNextResult.Flow;
             }
         }
 
@@ -111,7 +111,7 @@ namespace L2O2.Core
 
             public TSource Source { get; set; }
 
-            public SelectManyInnerConsumer(Func<TSource, TCollection, T> resultSelector, Chain<T> chainT) : base(ProcessNextResult.OK) =>
+            public SelectManyInnerConsumer(Func<TSource, TCollection, T> resultSelector, Chain<T> chainT) : base(ProcessNextResult.Flow) =>
                 (this.chainT, this.resultSelector) = (chainT, resultSelector);
 
             public override ProcessNextResult ProcessNext(TCollection input)
@@ -140,7 +140,7 @@ namespace L2O2.Core
 
             public override ProcessNextResult ProcessNext((TSource, IEnumerable<TCollection>) input)
             {
-                var rc = ProcessNextResult.OK;
+                var rc = ProcessNextResult.Flow;
                 switch (input.Item2)
                 {
                     case Consumable<TCollection> consumable:
@@ -153,13 +153,13 @@ namespace L2O2.Core
                         foreach (var item in input.Item2)
                         {
                             rc = chainT.ProcessNext(resultSelector(input.Item1, item));
-                            if (rc.IsHalted())
+                            if (rc.IsStopped())
                                 break;
 
                         }
                         break;
                 }
-                return rc == ProcessNextResult.HaltedConsumer ? ProcessNextResult.HaltedConsumer : ProcessNextResult.OK;
+                return rc == ProcessNextResult.StoppedConsumer ? ProcessNextResult.StoppedConsumer : ProcessNextResult.Flow;
             }
         }
 
@@ -182,10 +182,10 @@ namespace L2O2.Core
                 foreach (var item in array)
                 {
                     var processNextResult = transform.ProcessNextStateless(item, out var u);
-                    if (processNextResult.IsOK())
+                    if (processNextResult.IsFlowing())
                         processNextResult = finalLink.ProcessNext(u);
 
-                    if (processNextResult.IsHalted())
+                    if (processNextResult.IsStopped())
                         break;
                 }
                 finalLink.ChainComplete();
@@ -203,10 +203,10 @@ namespace L2O2.Core
                 foreach (var item in lst)
                 {
                     var processNextResult = transform.ProcessNextStateless(item, out var u);
-                    if (processNextResult.IsOK())
+                    if (processNextResult.IsFlowing())
                         processNextResult = finalLink.ProcessNext(u);
 
-                    if (processNextResult.IsHalted())
+                    if (processNextResult.IsStopped())
                         break;
                 }
                 finalLink.ChainComplete();
@@ -224,7 +224,7 @@ namespace L2O2.Core
                 foreach (var item in array)
                 {
                     var processNextResult = chain.ProcessNext(item);
-                    if (processNextResult.IsHalted())
+                    if (processNextResult.IsStopped())
                         break;
                 }
                 chain.ChainComplete();
@@ -242,7 +242,7 @@ namespace L2O2.Core
                 foreach (var item in lst)
                 {
                     var processNextResult = chain.ProcessNext(item);
-                    if (processNextResult.IsHalted())
+                    if (processNextResult.IsStopped())
                         break;
                 }
                 chain.ChainComplete();
@@ -260,7 +260,7 @@ namespace L2O2.Core
                 foreach (var item in e)
                 {
                     var processNextResult = chain.ProcessNext(item);
-                    if (processNextResult.IsHalted())
+                    if (processNextResult.IsStopped())
                         break;
                 }
                 chain.ChainComplete();
